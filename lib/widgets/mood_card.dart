@@ -43,7 +43,7 @@ class ItemCard extends StatelessWidget {
             );
           } else if (item.name == "Logout") {
             final response = await request.logout(
-                "http://127.0.0.1:8000/auth/logout_mobile/");
+                "http://127.0.0.1:8000/authmobile/logout/");
             String message = response["message"];
             if (context.mounted) {
                 if (response['status']) {
