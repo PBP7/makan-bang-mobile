@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:makan_bang/screens/menu.dart';
 import 'package:makan_bang/screens/moodentry_form.dart';
-import 'package:makan_bang/screens/list_moodentry.dart';
+import 'package:makan_bang/catalog/screens/list_productentry.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -54,7 +54,7 @@ class LeftDrawer extends StatelessWidget {
   ),
   ListTile(
     leading: const Icon(Icons.mood),
-    title: const Text('Tambah Mood'),
+    title: const Text('Lihat Menu'),
     // Bagian redirection ke MoodEntryFormPage
     onTap: () {
       Navigator.push(
@@ -70,7 +70,7 @@ class LeftDrawer extends StatelessWidget {
     onTap: () {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const MoodEntryPage()),
+        MaterialPageRoute(builder: (context) => const ProductEntryPage()),
       );
     },
   ),
