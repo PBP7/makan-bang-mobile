@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:makan_bang/screens/menu.dart';
-import 'package:makan_bang/screens/moodentry_form.dart';
+import 'package:makan_bang/catalog/screens/product_entryform.dart';
 import 'package:makan_bang/catalog/screens/list_productentry.dart';
 
 class LeftDrawer extends StatelessWidget {
@@ -60,7 +60,7 @@ class LeftDrawer extends StatelessWidget {
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const MoodEntryFormPage(),
+            builder: (context) => const ProductEntryFormPage(),
           ));
     },
   ),
