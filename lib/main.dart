@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:makan_bang/models/user.dart.dart';
 import 'package:makan_bang/screens/menu.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -13,11 +14,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Provider(
-      create: (_) {
-        CookieRequest request = CookieRequest();
-        return request;
-      },
+    return MultiProvider(
+      providers: [
+        // Menyediakan CookieRequest
+        Provider(
+          create: (_) {
+            CookieRequest request = CookieRequest();
+            return request;
+          },
+        ),
+        // Menyediakan UserModel
+        ChangeNotifierProvider(
+          create: (_) => UserModel(),  // Menggunakan UserModel untuk menyimpan dan mengelola status user
+        ),
+      ],
       child: MaterialApp(
         title: 'Mental Health Tracker',
         theme: ThemeData(
@@ -26,7 +36,7 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.deepPurple,
           ).copyWith(secondary: Colors.deepPurple[400]),
         ),
-        home: const LoginPage(),
+        home: const LoginPage(),  // Halaman login yang akan memulai aplikasi
       ),
     );
   }

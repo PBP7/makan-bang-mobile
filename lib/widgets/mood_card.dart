@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:makan_bang/screens/moodentry_form.dart';
-import 'package:makan_bang/screens/list_moodentry.dart';
+
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:makan_bang/screens/login.dart';
@@ -31,17 +30,8 @@ class ItemCard extends StatelessWidget {
                 content: Text("Kamu telah menekan tombol ${item.name}!")));
 
           // Navigate ke route yang sesuai (tergantung jenis tombol)
-          if (item.name == "Tambah Mood") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MoodEntryFormPage()),
-            );
-          } else if (item.name == "Lihat Mood") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MoodEntryPage()),
-            );
-          } else if (item.name == "Logout") {
+         
+            if (item.name == "Logout") {
             final response = await request.logout(
                 "http://127.0.0.1:8000/authmobile/logout/");
             String message = response["message"];

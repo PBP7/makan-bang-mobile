@@ -1,3 +1,4 @@
+import 'package:makan_bang/models/user.dart.dart';
 import 'package:makan_bang/screens/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -99,8 +100,6 @@ class _LoginPageState extends State<LoginPage> {
                       String password = _passwordController.text;
 
                       // Cek kredensial
-                      // Untuk menyambungkan Android emulator dengan Django pada localhost,
-                      // gunakan URL http://10.0.2.2/
                       final response = await request
                           .login("http://127.0.0.1:8000/authmobile/login/", {
                         'username': username,
@@ -110,6 +109,10 @@ class _LoginPageState extends State<LoginPage> {
                       if (request.loggedIn) {
                         String message = response['message'];
                         String uname = response['username'];
+
+                        // Menyimpan informasi pengguna di UserModel
+                        context.read<UserModel>().setUser(uname);
+
                         if (context.mounted) {
                           Navigator.pushReplacement(
                             context,
@@ -120,8 +123,9 @@ class _LoginPageState extends State<LoginPage> {
                             ..hideCurrentSnackBar()
                             ..showSnackBar(
                               SnackBar(
-                                  content:
-                                      Text("$message Selamat datang, $uname.")),
+                                content: Text(
+                                    "$message Selamat datang, $uname."),
+                              ),
                             );
                         }
                       } else {

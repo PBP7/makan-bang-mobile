@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:makan_bang/catalog/models/product_entry.dart'; // Model yang sudah diperbarui
 import 'package:makan_bang/catalog/screens/productdetail.dart';
+import 'package:makan_bang/catalog/widgets/product_card_actions.dart';
+import 'package:makan_bang/models/user.dart.dart';
 import 'package:makan_bang/widgets/left_drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:makan_bang/catalog/widgets/floating_button.dart';
+
+// Fungsi untuk menghitung scaleFactor berdasarkan ukuran layar
 
 class ProductEntryPage extends StatefulWidget {
   const ProductEntryPage({super.key});
@@ -12,6 +17,15 @@ class ProductEntryPage extends StatefulWidget {
   State<ProductEntryPage> createState() => _ProductEntryPageState();
 }
 
+double getScaleFactor(double width) {
+  if (width <= 600) {
+    return (width / 450).clamp(0.8, 1.2); // Mobile
+  } else if (width <= 1024) {
+    return (width / 800).clamp(0.6, 1.0); // Tablet
+  } else {
+    return (width / 1400).clamp(0.5, 0.8); // Desktop
+  }
+}
 class _ProductEntryPageState extends State<ProductEntryPage> {
   Future<List<Product>> fetchProducts(CookieRequest request) async {
     final response = await request.get('http://127.0.0.1:8000/katalog/json/');
@@ -27,18 +41,18 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    final user = context.watch<UserModel>(); 
     // MediaQuery untuk mendapatkan dimensi layar
     double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
 
-    // Faktor pengali berdasarkan ukuran layar (sedikit lebih besar dari sebelumnya)
-    double scaleFactor = width / 450; // Pengali sedikit lebih besar agar elemen lebih responsif
+    // Hitung scaleFactor berdasarkan ukuran layar
+    double scaleFactor = getScaleFactor(width);
 
-    // Menentukan jumlah kolom berdasarkan ukuran lebar layar
-    int crossAxisCount = width > 600 ? 3 : 2;
+    // Tentukan jumlah kolom untuk GridView
+    int crossAxisCount = width > 600 ? 3 : 2; // Mobile dan Tablet
 
-    // Menentukan batas maksimal lebar untuk item agar tidak terlalu besar
-    double maxWidth = width > 1000 ? 1000 : width;  // Maksimal lebar 1000px untuk perangkat besar
+    // Tentukan batas maksimal lebar untuk item agar tidak terlalu besar
+    double maxWidth = width > 1000 ? 1000 : width; // Maksimal lebar 1000px untuk perangkat besar
 
     // Tentukan ukuran maksimal untuk gambar, font, dan elemen lainnya
     double maxImageHeight = 180; // Batas maksimal tinggi gambar
@@ -49,6 +63,9 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
         title: const Text('Product Entry List'),
       ),
       drawer: const LeftDrawer(),
+      floatingActionButton: user.name == 'admin' // Cek apakah user adalah admin
+          ? const ShopFloatingActionButton() // Tampilkan FAB hanya untuk admin
+          : null,
       body: FutureBuilder(
         future: fetchProducts(request),
         builder: (context, AsyncSnapshot snapshot) {
@@ -66,8 +83,8 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
               return GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: crossAxisCount,
-                  crossAxisSpacing: 12 * scaleFactor, // Sesuaikan spacing lebih kecil
-                  mainAxisSpacing: 12 * scaleFactor, // Sesuaikan spacing lebih kecil
+                  crossAxisSpacing: 14 * scaleFactor, // Sesuaikan spacing lebih kecil
+                  mainAxisSpacing: 14 * scaleFactor, // Sesuaikan spacing lebih kecil
                   childAspectRatio: 0.7, // Rasio anak grid agar tidak terlalu tinggi
                 ),
                 itemCount: snapshot.data.length,
@@ -89,7 +106,7 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                       // Ukuran font berdasarkan lebar item
                       double fontSize = itemWidth * 0.06; // Sedikit lebih besar dari sebelumnya
                       if (fontSize > maxFontSize) {
-                        fontSize = maxFontSize; // Batasi ukuran font
+                        fontSize = maxFontSize; // Batasi
                       }
 
                       // Ukuran harga lebih besar
@@ -158,7 +175,7 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                                         ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                      SizedBox(height: 8 * scaleFactor),
+
                                       // Kategori (lebih kecil)
                                       Container(
                                         padding: EdgeInsets.symmetric(
@@ -212,6 +229,19 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                                     ],
                                   ),
                                 ),
+                                const Spacer(), // Tambahkan Spacer untuk mendorong `ProductCardActions` ke bawah
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 10 * scaleFactor),
+                                  child: user.name == 'admin' // Tampilkan hanya jika admin
+                                      ? ProductCardActions(
+                                          product: product,
+                                          onUpdateSuccess: () {
+                                            setState(() {});
+                                          },
+                                        )
+                                      : const SizedBox.shrink(),
+                                ),
+                                SizedBox(height: 10 * scaleFactor), // Jarak tambahan di bawah tombol
                               ],
                             ),
                           ),
