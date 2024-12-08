@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:makan_bang/screens/menu.dart';
 import 'package:makan_bang/catalog/screens/product_entryform.dart';
 import 'package:makan_bang/catalog/screens/list_productentry.dart';
+import 'package:makan_bang/preference/screens/preference_page.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -19,7 +20,7 @@ class LeftDrawer extends StatelessWidget {
     child: const Column(
       children: [
         Text(
-          'Mental Health Tracker',
+          'Makan Bang',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 24,
@@ -29,7 +30,7 @@ class LeftDrawer extends StatelessWidget {
         ),
         Padding(padding: EdgeInsets.all(8)),
         Text(
-          "Ayo jaga kesehatan mentalmu setiap hari disini!",
+          "Cari makan enak dan murah? Ya di Makan Bang aja bro!",
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 15,
@@ -71,6 +72,16 @@ class LeftDrawer extends StatelessWidget {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const ProductEntryPage()),
+      );
+    },
+  ),
+  ListTile(
+    leading: const Icon(Icons.settings),
+    title: const Text('Preferences'),
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const PreferencePage()),
       );
     },
   ),
