@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:makan_bang/meal_planning/screens/create_mealplan.dart';
 import 'package:makan_bang/widgets/left_drawer.dart';
 import '../models/meal_plan_model.dart';
 import 'package:makan_bang/meal_planning/services/meal_plan_service.dart' as service;
@@ -60,6 +61,17 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
             );
           }
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navigasi ke halaman CreateMealPlanScreen
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CreateMealPlanScreen()),
+          );
+        },
+        child: Icon(Icons.add),
+        tooltip: 'Create Meal Plan',
       ),
     );
   }

@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 
 class TimePickerWidget extends StatelessWidget {
-  final Function(TimeOfDay) onTimeSelected;
+  final TimeOfDay? selectedTime;
+  final VoidCallback onPickTime;
 
-  const TimePickerWidget({Key? key, required this.onTimeSelected})
-      : super(key: key);
+  const TimePickerWidget({
+    Key? key,
+    this.selectedTime,
+    required this.onPickTime,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () async {
-        final selectedTime = await showTimePicker(
-          context: context,
-          initialTime: TimeOfDay.now(),
-        );
-        if (selectedTime != null) {
-          onTimeSelected(selectedTime);
-        }
-      },
-      child: const Text('Select Time'),
+    return TextButton.icon(
+      icon: Icon(Icons.access_time),
+      label: Text(
+        selectedTime == null
+            ? 'Pick a Time'
+            : 'Time: ${selectedTime!.format(context)}',
+      ),
+      onPressed: onPickTime,
     );
   }
 }
