@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:makan_bang/catalog/models/product_entry.dart';
+import 'package:makan_bang/meal_planning/screens/food_choices.dart';
 import 'package:makan_bang/meal_planning/widgets/date_picker.dart';
 import 'package:makan_bang/meal_planning/widgets/time_picker.dart';
 
@@ -10,7 +12,7 @@ class CreateMealPlanScreen extends StatefulWidget {
 class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
   String? selectedDate;
   TimeOfDay? selectedTime;
-  List<String> foodItems = [];
+  List<Product> foodItems = [];  // Data makanan yang dipilih
 
   void _pickDate() async {
     DateTime? pickedDate = await showDatePicker(
@@ -45,7 +47,7 @@ class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
       );
       return;
     }
-    // Perform save operation
+    // Save the meal plan (data logic)
     print("Meal Plan Saved with Date: $selectedDate, Time: ${selectedTime!.format(context)}");
   }
 
@@ -103,14 +105,20 @@ class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
                                         child: Column(
                                           children: [
                                             Expanded(
-                                              child: Container(
-                                                color: Colors.grey[200],
-                                                child: Icon(Icons.fastfood),
+                                                child: Container(
+                                                  color: Colors.grey[200],
+                                                  child: Image.network(
+                                                    foodItems[index].fields.pictureLink,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context, error, stackTrace) {
+                                                      return Icon(Icons.broken_image, color: Colors.red);
+                                                    },
+                                                  ),
+                                                ),
                                               ),
-                                            ),
                                             Padding(
                                               padding: const EdgeInsets.all(8.0),
-                                              child: Text(foodItems[index]),
+                                              child: Text(foodItems[index].fields.item),
                                             ),
                                           ],
                                         ),
@@ -125,7 +133,19 @@ class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
                               icon: Icon(Icons.add_circle, size: 48),
                               color: Colors.blue,
                               onPressed: () {
-                                // Add food selection logic here
+                                // Navigate to FoodChoicesScreen and wait for the returned data
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => FoodChoicesScreen(),
+                                  ),
+                                ).then((selectedFoods) {
+                                  if (selectedFoods != null) {
+                                    setState(() {
+                                      foodItems.addAll(selectedFoods);
+                                    });
+                                  }
+                                });
                               },
                             ),
                           ),

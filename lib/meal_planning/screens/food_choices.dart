@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:makan_bang/catalog/models/product_entry.dart';
+import 'package:makan_bang/meal_planning/screens/create_mealplan.dart';
 import '../widgets/food_card.dart';
 
 class FoodChoicesScreen extends StatefulWidget {
@@ -11,7 +12,7 @@ class FoodChoicesScreen extends StatefulWidget {
 
 class _FoodChoicesScreenState extends State<FoodChoicesScreen> {
   List<Product> foodItems = [];
-  List<String> selectedFoods = [];
+  List<Product> selectedFoods = [];
 
   @override
   void initState() {
@@ -38,7 +39,7 @@ class _FoodChoicesScreenState extends State<FoodChoicesScreen> {
     }
   }
 
-  void toggleSelection(String id) {
+  void toggleSelection(Product id) {
     setState(() {
       if (selectedFoods.contains(id)) {
         selectedFoods.remove(id);
@@ -49,8 +50,7 @@ class _FoodChoicesScreenState extends State<FoodChoicesScreen> {
   }
 
   void submitChoices() {
-    print("Selected Food IDs: $selectedFoods");
-    // Lakukan pengiriman data atau navigasi ke halaman berikutnya
+    Navigator.pop(context, selectedFoods);  // Mengirim data kembali ke halaman sebelumnya (CreateMealPlanScreen)
   }
 
   @override
@@ -60,7 +60,9 @@ class _FoodChoicesScreenState extends State<FoodChoicesScreen> {
         title: const Text('Choose Your Food'),
         actions: [
           TextButton(
-            onPressed: submitChoices,
+            onPressed: selectedFoods.isNotEmpty
+                ? submitChoices
+                : null, // Cegah navigasi jika tidak ada makanan yang dipilih
             child: const Text(
               'Submit Choices',
               style: TextStyle(color: Colors.white),
@@ -82,10 +84,10 @@ class _FoodChoicesScreenState extends State<FoodChoicesScreen> {
               itemBuilder: (context, index) {
                 final food = foodItems[index].fields;
                 return GestureDetector(
-                  onTap: () => toggleSelection(foodItems[index].pk),
+                  onTap: () => toggleSelection(foodItems[index]),
                   child: FoodCard(
                     food: food,
-                    isSelected: selectedFoods.contains(foodItems[index].pk),
+                    isSelected: selectedFoods.contains(foodItems[index]),
                   ),
                 );
               },
