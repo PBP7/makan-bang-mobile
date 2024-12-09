@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:makan_bang/meal_planning/screens/first_page_meal_plan.dart';
 import 'package:makan_bang/screens/menu.dart';
 import 'package:makan_bang/catalog/screens/product_entryform.dart';
 import 'package:makan_bang/catalog/screens/list_productentry.dart';
@@ -72,6 +73,18 @@ class LeftDrawer extends StatelessWidget {
         context,
         MaterialPageRoute(builder: (context) => const ProductEntryPage()),
       );
+    },
+  ),
+  ListTile(
+    leading: const Icon(Icons.calendar_month),
+    title: const Text('Meal Planning'),
+    // Bagian redirection ke MyHomePage
+    onTap: () {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MealPlanScreen(),
+          ));
     },
   ),
         ],
