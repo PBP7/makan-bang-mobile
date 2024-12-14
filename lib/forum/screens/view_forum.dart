@@ -18,6 +18,7 @@ class _ForumPageState extends State<ForumPage> {
   List<ForumQuestion> _questions = [];
   bool _isLoading = true;
   String _selectedTopic = 'All Topic';
+  bool _showOnlyUserPosts = false;
 
   final List<String> _topics = [
     'All Topic',
@@ -35,26 +36,34 @@ class _ForumPageState extends State<ForumPage> {
   }
 
   Future<void> _fetchQuestions() async {
-      final request = context.read<CookieRequest>();
-      setState(() => _isLoading = true);
-      try {
-        final response = await request.get(
-          'http://127.0.0.1:8000/forum/json/questions/?topic=$_selectedTopic'
-        );
+    final request = context.read<CookieRequest>();
+    setState(() => _isLoading = true);
+    try {
+      final response = await request.get(
+        'http://127.0.0.1:8000/forum/json/questions/?topic=$_selectedTopic'
+      );
 
-        if (response != null) {
-          final questionsList = forumQuestionFromJson(json.encode(response));
-          setState(() {
+      if (response != null) {
+        final questionsList = forumQuestionFromJson(json.encode(response));
+        setState(() {
+          if (_showOnlyUserPosts) {
+            _questions = questionsList.where(
+              (q) => q.user.username == request.jsonData['username']
+            ).toList();
+          } else {
             _questions = questionsList;
-          });
-        }
-      } catch (e) {
+          }
+        });
+      }
+    } catch (e) {
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $e')),
         );
-      } finally {
-        setState(() => _isLoading = false);
       }
+    } finally {
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -65,34 +74,122 @@ class _ForumPageState extends State<ForumPage> {
       appBar: AppBar(
         title: const Text('Forum'),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(48.0),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: DropdownButtonFormField<String>(
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+          preferredSize: const Size.fromHeight(96.0), // Increased height for both widgets
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  value: _selectedTopic,
+                  items: _topics.map((String topic) {
+                    return DropdownMenuItem<String>(
+                      value: topic,
+                      child: Text(topic),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      setState(() {
+                        _selectedTopic = newValue;
+                      });
+                      _fetchQuestions();
+                    }
+                  },
                 ),
               ),
-              value: _selectedTopic,
-              items: _topics.map((String topic) {
-                return DropdownMenuItem<String>(
-                  value: topic,
-                  child: Text(topic),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                if (newValue != null) {
-                  setState(() {
-                    _selectedTopic = newValue;
-                  });
-                  _fetchQuestions();
-                }
-              },
-            ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _showOnlyUserPosts = false;
+                                  });
+                                  _fetchQuestions();
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                  decoration: BoxDecoration(
+                                    color: !_showOnlyUserPosts ? Colors.white : null,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    border: !_showOnlyUserPosts
+                                        ? Border.all(color: Colors.blue)
+                                        : null,
+                                  ),
+                                  child: Text(
+                                    'All Posts',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: !_showOnlyUserPosts
+                                          ? Colors.blue
+                                          : Colors.grey[600],
+                                      fontWeight: !_showOnlyUserPosts
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _showOnlyUserPosts = true;
+                                  });
+                                  _fetchQuestions();
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                  decoration: BoxDecoration(
+                                    color: _showOnlyUserPosts ? Colors.white : null,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    border: _showOnlyUserPosts
+                                        ? Border.all(color: Colors.blue)
+                                        : null,
+                                  ),
+                                  child: Text(
+                                    'Your Posts',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: _showOnlyUserPosts
+                                          ? Colors.blue
+                                          : Colors.grey[600],
+                                      fontWeight: _showOnlyUserPosts
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -138,6 +235,10 @@ class ForumQuestionCard extends StatelessWidget {
     required this.question,
   });
 
+  String _formatDate(DateTime date) {
+    return "${date.day}-${date.month}-${date.year}";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -177,6 +278,13 @@ class ForumQuestionCard extends StatelessWidget {
                 const SizedBox(width: 16),
                 Icon(Icons.access_time, size: 16, color: Colors.grey[600]),
                 const SizedBox(width: 4),
+                Text(
+                  _formatDate(question.createdAt),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                ),
               ],
             ),
           ],

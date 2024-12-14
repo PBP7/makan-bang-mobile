@@ -19,6 +19,9 @@ class ForumDetailPage extends StatefulWidget {
 }
 
 class _ForumDetailPageState extends State<ForumDetailPage> {
+  String _formatDate(DateTime date) {
+    return "${date.day}-${date.month}-${date.year}";
+  }
   final TextEditingController _replyController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   
@@ -134,6 +137,16 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                           ),
                         ),
                         const SizedBox(width: 16),
+                        Icon(Icons.access_time, size: 16, color: Colors.grey[600]),
+                        const SizedBox(width: 4),
+                        Text(
+                          _formatDate(widget.question.createdAt),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(width: 16),
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8.0,
@@ -234,6 +247,23 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                           ),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Row(
+                                          children: [
+                                            Icon(Icons.access_time, 
+                                              size: 14, 
+                                              color: Colors.grey[600]
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              _formatDate(reply.createdAt),
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey[600],
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
