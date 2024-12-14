@@ -13,78 +13,77 @@ class LeftDrawer extends StatelessWidget {
       child: ListView(
         children: [
           DrawerHeader(
-            
-    decoration: BoxDecoration(
-      color: Theme.of(context).colorScheme.primary,
-    ),
-    child: const Column(
-      children: [
-        Text(
-          'Mental Health Tracker',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            child: const Column(
+              children: [
+                Text(
+                  'MAKAN BANG',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                Padding(padding: EdgeInsets.all(8)),
+                Text(
+                  "Ayo jaga kesehatan mentalmu setiap hari disini!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.black,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        Padding(padding: EdgeInsets.all(8)),
-        Text(
-          "Ayo jaga kesehatan mentalmu setiap hari disini!",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 15,
-            color: Colors.white,
-            fontWeight: FontWeight.normal,
+          ListTile(
+            leading: const Icon(Icons.home_outlined),
+            title: const Text('Home'),
+            // Bagian redirection ke MyHomePage
+            onTap: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MyHomePage(),
+                  ));
+            },
           ),
-        ),
-      ],
-    ),
+          ListTile(
+            leading: const Icon(Icons.add_circle_outline_sharp),
+            title: const Text('Add Product'),
+            // Bagian redirection ke MoodEntryFormPage
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProductEntryFormPage(),
+                  ));
+            },
           ),
-  ListTile(
-    leading: const Icon(Icons.home_outlined),
-    title: const Text('Halaman Utama'),
-    // Bagian redirection ke MyHomePage
-    onTap: () {
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MyHomePage(),
-          ));
-    },
-  ),
-  ListTile(
-    leading: const Icon(Icons.mood),
-    title: const Text('Lihat Menu'),
-    // Bagian redirection ke MoodEntryFormPage
-    onTap: () {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ProductEntryFormPage(),
-          ));
-    },
-  ),
-  ListTile(
-    leading: const Icon(Icons.add_reaction_rounded),
-    title: const Text('Daftar Mood'),
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ProductEntryPage()),
-      );
-    },
-  ),
-  ListTile(
-    leading: const Icon(Icons.chat_outlined),
-    title: const Text('Forum'),
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ForumPage()),
-      );
-    },
-  ),
+          ListTile(
+            leading: const Icon(Icons.menu_book),
+            title: const Text('Catalogue'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProductEntryPage()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.format_quote_rounded),
+            title: const Text('Forum'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ForumPage()),
+              );
+            },
+          ),
         ],
       ),
     );

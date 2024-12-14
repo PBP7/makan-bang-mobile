@@ -3,13 +3,13 @@ import 'package:makan_bang/widgets/left_drawer.dart';
 import 'package:makan_bang/widgets/mood_card.dart';
 
 class MyHomePage extends StatelessWidget {
-  final String npm = 'PBP 7'; // NPM
-  final String name = 'MAKAN BANG'; // Nama
-  final String className = 'PBP B'; // Kelas
-
   final List<ItemHomepage> items = [
-         ItemHomepage("Lihat Mood", Icons.mood),
-         ItemHomepage("Tambah Mood", Icons.add),
+         ItemHomepage("Catalogue", Icons.menu_book),
+         ItemHomepage("Rate and Review ", Icons.rate_review_outlined),
+         ItemHomepage("Forum", Icons.emoji_people_sharp),
+         ItemHomepage("Preference", Icons.fastfood_outlined),
+         ItemHomepage("Meal Plan", Icons.list_alt),
+         ItemHomepage("Bookmark", Icons.bookmark_add),
          ItemHomepage("Logout", Icons.logout),
      ];
 
@@ -21,17 +21,16 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       // AppBar adalah bagian atas halaman yang menampilkan judul.
       appBar: AppBar(
-        // Judul aplikasi "Mental Health Tracker" dengan teks putih dan tebal.
         title: const Text(
-          'Mental Health Tracker',
+          'MAKAN BANG',
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
         // Warna latar belakang AppBar diambil dari skema warna tema aplikasi.
         backgroundColor: Theme.of(context).colorScheme.primary,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       drawer: const LeftDrawer(),
       // Body halaman dengan padding di sekelilingnya.
@@ -41,19 +40,8 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Row untuk menampilkan 3 InfoCard secara horizontal.
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                InfoCard(title: 'NPM', content: npm),
-                InfoCard(title: 'Name', content: name),
-                InfoCard(title: 'Class', content: className),
-              ],
-            ),
-
             // Memberikan jarak vertikal 16 unit.
-            const SizedBox(height: 16.0),
-
+            const SizedBox(height: 12.0),
             // Menempatkan widget berikutnya di tengah halaman.
             Center(
               child: Column(
@@ -64,7 +52,7 @@ class MyHomePage extends StatelessWidget {
                   const Padding(
                     padding: EdgeInsets.only(top: 16.0),
                     child: Text(
-                      'Welcome to Mental Health Tracker',
+                      'Welcome to MAKAN BANG',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18.0,
