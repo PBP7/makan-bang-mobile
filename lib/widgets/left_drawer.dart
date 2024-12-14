@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:makan_bang/screens/menu.dart';
 import 'package:makan_bang/catalog/screens/product_entryform.dart';
 import 'package:makan_bang/catalog/screens/list_productentry.dart';
+import 'package:makan_bang/forum/screens/view_forum.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -71,6 +72,16 @@ class LeftDrawer extends StatelessWidget {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const ProductEntryPage()),
+      );
+    },
+  ),
+  ListTile(
+    leading: const Icon(Icons.chat_outlined),
+    title: const Text('Forum'),
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ForumPage()),
       );
     },
   ),
