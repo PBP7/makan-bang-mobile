@@ -16,7 +16,8 @@ class ItemCard extends StatelessWidget {
     final request = context.watch<CookieRequest>();
     return Material(
       // Menentukan warna latar belakang dari tema aplikasi.
-      color: Theme.of(context).colorScheme.secondary,
+      color: Colors.amber[50],
+      elevation: 3,
       // Membuat sudut kartu melengkung.
       borderRadius: BorderRadius.circular(12),
       
@@ -71,7 +72,7 @@ class ItemCard extends StatelessWidget {
               children: [
                 Icon(
                   item.icon,
-                  color: Colors.black,
+                  color: item.color,
                   size: 30.0,
                 ),
                 const Padding(padding: EdgeInsets.all(3)),
@@ -93,6 +94,7 @@ class ItemCard extends StatelessWidget {
 class ItemHomepage {
     final String name;
     final IconData icon;
+    final Color color;
 
-    ItemHomepage(this.name, this.icon);
+    ItemHomepage(this.name, this.icon, this.color);
 }
