@@ -178,25 +178,31 @@ class LeftDrawer extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.chat_bubble_outline),
-                        onPressed: () {},
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
+                      InkWell(
+                        onTap: () {},
+                        child: Image.network(
+                          'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/static/image/iconx.png',
+                          width: 24,
+                          height: 24,
+                        ),
                       ),
                       const SizedBox(width: 16),
-                      IconButton(
-                        icon: const Icon(Icons.chat_bubble_outline),
-                        onPressed: () {},
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
+                      InkWell(
+                        onTap: () {},
+                        child: Image.network(
+                          'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/static/image/iconinstagram.png',
+                          width: 24,
+                          height: 24,
+                        ),
                       ),
                       const SizedBox(width: 16),
-                      IconButton(
-                        icon: const Icon(Icons.chat_bubble_outline),
-                        onPressed: () {},
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
+                      InkWell(
+                        onTap: () {},
+                        child: Image.network(
+                          'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/static/image/iconpinterest.png',
+                          width: 24,
+                          height: 24,
+                        ),
                       ),
                     ],
                   ),

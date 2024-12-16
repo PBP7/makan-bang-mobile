@@ -19,6 +19,40 @@ class ForumDetailPage extends StatefulWidget {
 }
 
 class _ForumDetailPageState extends State<ForumDetailPage> {
+  Color _getTopicColor(String topic) {
+    switch (topic) {
+      case 'Information':
+        return Colors.blue;
+      case 'Foods':
+        return Colors.teal;
+      case 'Restaurants':
+        return Colors.pink;
+      case 'Recommendation':
+        return Colors.orange;
+      case 'Experience':
+        return Colors.deepOrange;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  Color _getBackgroundColor(String topic) {
+    switch (topic) {
+      case 'Information':
+        return Colors.blue[50] ?? Colors.blue.withOpacity(0.1);
+      case 'Foods':
+        return Colors.teal[50] ?? Colors.teal.withOpacity(0.1);
+      case 'Restaurants':
+        return Colors.pink[50] ?? Colors.pink.withOpacity(0.1);
+      case 'Recommendation':
+        return Colors.orange[50] ?? Colors.orange.withOpacity(0.1);
+      case 'Experience':
+        return Colors.deepOrange[50] ?? Colors.deepOrange.withOpacity(0.1);
+      default:
+        return Colors.grey[50] ?? Colors.grey.withOpacity(0.1);
+    }
+  }
+
   String _formatDate(DateTime date) {
     return "${date.day}-${date.month}-${date.year}";
   }
@@ -79,10 +113,17 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    final topicColor = _getTopicColor(widget.question.topic);
+    final backgroundColor = _getBackgroundColor(widget.question.topic);
     
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Discussion Details'),
+        title: const Text('Forum',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 24,)
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
         actions: [
           if (widget.question.user.username == request.jsonData['username'] || request.jsonData['username'].toLowerCase() == 'admin') ...[
             IconButton(
@@ -116,6 +157,26 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12.0,
+                        vertical: 6.0,
+                      ),
+                      decoration: BoxDecoration(
+                        color: backgroundColor,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                      child: Text(
+                        widget.question.topic,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: topicColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
                     Text(
                       widget.question.title,
                       style: const TextStyle(
@@ -147,23 +208,6 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0,
-                            vertical: 4.0,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.blue[100],
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            widget.question.topic,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.blue[900],
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -171,7 +215,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.grey[50],
+                        color: const Color.fromARGB(255, 251, 250, 247),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -215,10 +259,10 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                           margin: const EdgeInsets.only(bottom: 16),
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.grey[50],
+                            color: const Color.fromARGB(255, 255, 254, 252),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
-                              color: Colors.grey[200]!,
+                              color: const Color.fromARGB(255, 233, 230, 218),
                               width: 1,
                             ),
                           ),
@@ -228,11 +272,11 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                               Row(
                                 children: [
                                   CircleAvatar(
-                                    backgroundColor: Colors.blue[100],
+                                    backgroundColor: Colors.white,
                                     child: Text(
                                       reply.user.username[0].toUpperCase(),
                                       style: TextStyle(
-                                        color: Colors.blue[900],
+                                        color: Colors.grey[900],
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -268,7 +312,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                                       ],
                                     ),
                                   ),
-                                  // Add delete button if the user is the owner of the reply
+                                  // add delete button if user is the owner of the reply or admin
                                   if (reply.user.username == request.jsonData['username'] || request.jsonData['username'].toLowerCase() == 'admin')
                                     IconButton(
                                       icon: const Icon(Icons.delete, size: 20),
@@ -313,9 +357,12 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                   Expanded(
                     child: TextFormField(
                       controller: _replyController,
-                      decoration: const InputDecoration(
-                        hintText: 'Write a reply...',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        hintText: 'Share your thoughts...',
+                        border: const OutlineInputBorder(),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blue[900]!),
+                        ),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -328,7 +375,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                   const SizedBox(width: 8),
                   IconButton(
                     icon: const Icon(Icons.send),
-                    color: Colors.blue,
+                    color: Colors.blue[900],
                     onPressed: () => _postReply(request),
                   ),
                 ],
