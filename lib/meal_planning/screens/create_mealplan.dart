@@ -1,5 +1,7 @@
+// Import yang relevan
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:makan_bang/catalog/models/product_entry.dart' as catalog;
 import 'package:makan_bang/meal_planning/screens/add_meal_plan.dart';
 import 'package:makan_bang/meal_planning/screens/first_page_meal_plan.dart';
@@ -9,10 +11,10 @@ import 'package:makan_bang/meal_planning/widgets/time_picker.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import '../models/meal_plan_model.dart';
+import 'package:makan_bang/meal_planning/services/meal_plan_service.dart' as service;
 
 class CreateMealPlanScreen extends StatefulWidget {
   final MealPlan? mealPlan;
-
   const CreateMealPlanScreen({Key? key, this.mealPlan}) : super(key: key);
 
   @override
@@ -20,6 +22,8 @@ class CreateMealPlanScreen extends StatefulWidget {
 }
 
 class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
+  final mealPlanService = service.MealPlanService(baseUrl: 'http://127.0.0.1:8000/meal-planning/json/');  // Updated API endpoint
+  final TextEditingController _titleController = TextEditingController();
   String? selectedDate;
   TimeOfDay? selectedTime;
   List<catalog.Product> foodItems = [];
@@ -35,104 +39,90 @@ class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
 
   void _initializeForEditing() {
     isEditing = true;
-    selectedDate = widget.mealPlan!.fields.date.toString();
-    final timeParts = widget.mealPlan!.fields.time.split(':');
-    selectedTime = TimeOfDay(
-      hour: int.parse(timeParts[0]),
-      minute: int.parse(timeParts[1]),
-    );
-    _loadExistingFoodItems();
-  }
 
-  Future<void> _loadExistingFoodItems() async {
-    try {
-      final foodIds = widget.mealPlan!.fields.foodItems.map(int.parse).toList();
-      final items = await MealPlanService.getFoodItems(foodIds);
-      if (mounted) {
-        setState(() {
-          foodItems = items;
-        });
+    if (widget.mealPlan != null) {
+      _titleController.text = widget.mealPlan!.fields.title;
+
+      try {
+        DateTime parsedDate = widget.mealPlan!.fields.date;
+        selectedDate = "${parsedDate.year}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.day.toString().padLeft(2, '0')}";
+      } catch (e) {
+        selectedDate = DateTime.now().toString().split(' ')[0];
       }
-    } catch (e) {
-      _showErrorSnackBar("Error loading food items: $e");
+
+      try {
+        final timeStr = widget.mealPlan!.fields.time;
+        final timeParts = timeStr.split(':');
+        selectedTime = TimeOfDay(
+          hour: int.parse(timeParts[0]),
+          minute: int.parse(timeParts[1]),
+        );
+      } catch (e) {
+        selectedTime = TimeOfDay.now();
+      }
     }
   }
 
   void _showErrorSnackBar(String message) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-    }
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _saveMealPlan(CookieRequest request) async {
-    if (selectedDate == null || selectedTime == null || foodItems.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please complete all fields before saving.")),
-      );
+    if (_titleController.text.isEmpty || selectedDate == null || selectedTime == null || foodItems.isEmpty) {
+      _showErrorSnackBar("Please complete all fields before saving.");
       return;
     }
 
-    // Format waktu dengan benar
     String formattedTime = "${selectedTime!.hour.toString().padLeft(2, '0')}:${selectedTime!.minute.toString().padLeft(2, '0')}";
-    
-    // Pastikan format tanggal YYYY-MM-DD
     DateTime parsedDate = DateTime.parse(selectedDate!);
     String formattedDate = "${parsedDate.year}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.day.toString().padLeft(2, '0')}";
 
     final encodedData = jsonEncode({
+      'title': _titleController.text,
       'selected_date': formattedDate,
       'time': formattedTime,
       'foodItems': foodItems.map((item) => item.pk).toList(),
     });
 
     try {
-      final endpoint = isEditing 
+      final endpoint = isEditing
           ? 'http://127.0.0.1:8000/meal-planning/${widget.mealPlan!.pk}/update/'
           : 'http://127.0.0.1:8000/meal-planning/finish-json/';
 
       final response = await request.postJson(endpoint, encodedData);
-      
       if (response['status'] == 'success') {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(isEditing 
-                ? "Meal Plan successfully updated!" 
-                : "New Meal Plan successfully saved!")),
-          );
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => MealPlanScreen()),
-          );
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(isEditing ? "Meal Plan successfully updated!" : "New Meal Plan successfully saved!")),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MealPlanScreen()),
+        );
       } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Error: ${response['message']}")),
-          );
-        }
+        _showErrorSnackBar("Error: ${response['message']}");
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error: $e")),
-        );
-      }
+      _showErrorSnackBar("Error: $e");
     }
   }
 
   void _pickDate() async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: selectedDate != null ? DateTime.parse(selectedDate!) : DateTime.now(),
+      initialDate: selectedDate != null
+          ? DateTime.parse(selectedDate!)
+          : DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
+
     if (pickedDate != null) {
       setState(() {
         selectedDate = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
       });
     }
   }
+
 
   void _pickTime() async {
     TimeOfDay? pickedTime = await showTimePicker(
@@ -149,17 +139,13 @@ class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
-
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Edit Meal Plan' : 'Create Your Meal Plan'),
         actions: [
           TextButton(
             onPressed: () => _saveMealPlan(request),
-            child: Text(
-              isEditing ? "Update" : "Save",
-              style: const TextStyle(color: Colors.blue),
-            ),
+            child: Text(isEditing ? "Update" : "Save", style: const TextStyle(color: Colors.blue)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -171,6 +157,15 @@ class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            TextField(
+              controller: _titleController,
+              decoration: const InputDecoration(
+                labelText: "Title",
+                hintText: "Enter the meal plan title",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
             Expanded(
               child: Row(
                 children: [

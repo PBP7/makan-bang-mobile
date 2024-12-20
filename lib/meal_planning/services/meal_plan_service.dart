@@ -45,6 +45,26 @@ class MealPlanService {
     return foodNames;
   }
 
+  Future<List<Product>> getFoodItemsByName(List<String> names) async {
+    try {
+      final responses = await Future.wait(
+        names.map((name) async {
+          final response = await http.get(Uri.parse('localhost:8000/meal-planning/food-items-by-name/'));
+          if (response.statusCode == 200) {
+            return Product.fromJson(jsonDecode(response.body));
+          } else {
+            throw Exception('Failed to fetch food item for name: $name');
+          }
+        }),
+      );
+
+      return responses.cast<Product>();
+    } catch (e) {
+      throw Exception('Error fetching food items by name: $e');
+    }
+  }
+
+
   // Mengambil meal plans dengan nama makanan yang sudah diresolusikan
   Future<List<MealPlan>> fetchMealPlansWithNames() async {
     final mealPlans = await fetchMealPlans();
@@ -84,7 +104,7 @@ class MealPlanService {
     }
   }
 
-  Future<List<Product>> getFoodItems(List<int> foodIds) async {
+  Future<List<Product>> getFoodItems(List<String> foodIds) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/get-food-items/'),

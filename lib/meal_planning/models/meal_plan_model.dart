@@ -1,8 +1,11 @@
 import 'dart:convert';
 
-List<MealPlan> mealPlanFromJson(String str) => List<MealPlan>.from(json.decode(str).map((x) => MealPlan.fromJson(x)));
+List<MealPlan> mealPlanFromJson(String str) =>
+    List<MealPlan>.from(json.decode(str).map((x) => MealPlan.fromJson(x)));
 
-String mealPlanToJson(List<MealPlan> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String mealPlanToJson(List<MealPlan> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
 class MealPlan {
   String model;
   int pk;
@@ -36,12 +39,14 @@ class MealPlan {
 }
 
 class Fields {
+  String title; // Properti baru untuk title
   int user;
   DateTime date;
   String time;
   List<String> foodItems;
 
   Fields({
+    required this.title, // Tambahkan title ke konstruktor
     required this.user,
     required this.date,
     required this.time,
@@ -50,6 +55,7 @@ class Fields {
 
   // Factory untuk membuat Fields dari JSON
   factory Fields.fromJson(Map<String, dynamic> json) => Fields(
+        title: json["title"], // Parsing title dari JSON
         user: json["user"],
         date: DateTime.parse(json["date"]),
         time: json["time"],
@@ -58,6 +64,7 @@ class Fields {
 
   // Convert Fields ke JSON
   Map<String, dynamic> toJson() => {
+        "title": title, // Tambahkan title ke JSON
         "user": user,
         "date": "${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}",
         "time": time,
