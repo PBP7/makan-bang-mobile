@@ -33,4 +33,6 @@ class MealPlanService {
     }
     return false;
   }
+
+  static getFoodItems(List<int> foodIds) {}
 }

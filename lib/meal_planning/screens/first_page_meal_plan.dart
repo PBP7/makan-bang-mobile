@@ -21,18 +21,34 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
     mealPlans = mealPlanService.fetchMealPlans();
   }
 
-  void deleteMealPlan(int id) {
-    // Delete the meal plan by id and update the UI
-    mealPlanService.deleteMealPlan(id).then((_) {
-      setState(() {
-        mealPlans = mealPlanService.fetchMealPlans();  // Reload the meal plans
-      });
-    }).catchError((error) {
-      // Show an error message if the deletion fails
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to delete meal plan')),
-      );
+   void _refreshMealPlans() {
+    setState(() {
+      mealPlans = mealPlanService.fetchMealPlans();
     });
+  }
+  
+  Future<void> _deleteMealPlan(int id) async {
+    try {
+      await mealPlanService.deleteMealPlan(id);
+      _refreshMealPlans(); // Refresh the list after deletion
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Meal plan deleted successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting meal plan: $e')),
+      );
+    }
+  }
+
+  void _editMealPlan(MealPlan mealPlan) {
+    // Navigate to edit screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CreateMealPlanScreen(mealPlan: mealPlan),
+      ),
+    ).then((_) => _refreshMealPlans()); // Refresh list when returning from edit screen
   }
 
   @override
@@ -54,8 +70,9 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
               children: snapshot.data!
                   .map((plan) => MealCard(
                         mealPlan: plan,
-                        onExpand: () {},  // You can add the expand functionality here if needed
-                        onDelete: () => deleteMealPlan(plan.pk),  // Pass the delete function
+                        onExpand: () {},
+                        onDelete: () => _deleteMealPlan(plan.pk),
+                        onEdit: () => _editMealPlan(plan),
                       ))
                   .toList(),
             );
@@ -68,7 +85,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => CreateMealPlanScreen()),
-          );
+          ).then((_) => _refreshMealPlans());
         },
         child: Icon(Icons.add),
         tooltip: 'Create Meal Plan',

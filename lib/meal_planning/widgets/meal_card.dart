@@ -1,16 +1,20 @@
+// meal_card.dart
 import 'package:flutter/material.dart';
 import '../models/meal_plan_model.dart';
+import '../services/meal_plan_service.dart';
 
 class MealCard extends StatelessWidget {
   final MealPlan mealPlan;
   final VoidCallback onExpand;
   final VoidCallback onDelete;
+  final VoidCallback onEdit;
 
   const MealCard({
     Key? key,
     required this.mealPlan,
     required this.onExpand,
     required this.onDelete,
+    required this.onEdit,
   }) : super(key: key);
 
   @override
@@ -21,13 +25,47 @@ class MealCard extends StatelessWidget {
         children: [
           ListTile(
             title: Text('Meal Plan ID: ${mealPlan.pk}'),
-            subtitle: Text('Date: ${mealPlan.fields.date.toLocal()} - Time: ${mealPlan.fields.time}'),
-            trailing: IconButton(
-              icon: Icon(Icons.delete, color: Colors.red),
-              onPressed: onDelete,
+            subtitle: Text(
+                'Date: ${mealPlan.fields.date.toLocal()} - Time: ${mealPlan.fields.time}'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: onEdit,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () {
+                    // Show confirmation dialog before deleting
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Delete Meal Plan'),
+                          content: const Text(
+                              'Are you sure you want to delete this meal plan?'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: const Text('Cancel'),
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                            TextButton(
+                              child: const Text('Delete'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                onDelete();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
             ),
           ),
-          // Expandable food items list
           if (mealPlan.fields.foodItems.isNotEmpty) ...[
             const Divider(),
             ListView.builder(

@@ -1,5 +1,6 @@
 import 'dart:convert';  // Untuk decoding JSON
 import 'package:http/http.dart' as http;  // Untuk membuat HTTP request
+import 'package:makan_bang/catalog/models/product_entry.dart';
 import '../models/meal_plan_model.dart';  // Mengimpor model MealPlan
 
 class MealPlanService {
@@ -61,12 +62,45 @@ class MealPlanService {
     return mealPlans;
   }
 
-  // Menghapus meal plan berdasarkan ID
-  Future<void> deleteMealPlan(int id) async {
-    final response = await http.delete(Uri.parse('$baseUrl/$id/'));  // Endpoint untuk menghapus berdasarkan id
+   Future<void> deleteMealPlan(int id) async {
+    final response = await http.delete(
+      Uri.parse('http://127.0.0.1:8000/meal-planning/$id/delete/'),
+    );
 
     if (response.statusCode != 200) {
-      throw Exception('Gagal menghapus meal plan');
+      throw Exception('Failed to delete meal plan');
+    }
+  }
+
+  Future<void> updateMealPlan(int id, Map<String, dynamic> updates) async {
+    final response = await http.put(
+      Uri.parse('http://127.0.0.1:8000/meal-planning/$id/update/'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(updates),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update meal plan');
+    }
+  }
+
+  Future<List<Product>> getFoodItems(List<int> foodIds) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/get-food-items/'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'food_ids': foodIds}),
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.map((json) => Product.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load food items');
+      }
+    } catch (e) {
+      throw Exception('Error: $e');
     }
   }
 }
+
