@@ -40,8 +40,8 @@ class Fields {
   String nutrition;
   String description;
   String linkGofood;
-  bool isDatasetProduct; // Atribut untuk menandai produk dataset
-  // Atribut 'bookmarked' tidak akan disertakan di katalog
+  bool isDatasetProduct; // Menandai produk dataset
+  List<int> bookmarked; // Menandai apakah produk di-bookmark
 
   Fields({
     required this.item,
@@ -53,7 +53,8 @@ class Fields {
     required this.nutrition,
     required this.description,
     required this.linkGofood,
-    this.isDatasetProduct = false, // Nilai default adalah false
+    this.isDatasetProduct = false, // Nilai default
+    required this.bookmarked,
   });
 
   factory Fields.fromJson(Map<String, dynamic> json) => Fields(
@@ -67,7 +68,8 @@ class Fields {
         description: json["description"],
         linkGofood: json["link_gofood"],
         isDatasetProduct: json["is_dataset_product"] ?? false, // Nilai default false
-      );
+        bookmarked: List<int>.from(json["bookmarked"]),      
+        );
 
   Map<String, dynamic> toJson() => {
         "item": item,
@@ -79,7 +81,8 @@ class Fields {
         "nutrition": nutrition,
         "description": description,
         "link_gofood": linkGofood,
-        "is_dataset_product": isDatasetProduct, // Jika diperlukan di JSON
+        "is_dataset_product": isDatasetProduct,
+        "bookmarked": bookmarked, // Tambahkan ke JSON
       };
 
   // Properti untuk menampilkan produk tanpa atribut yang tidak diinginkan

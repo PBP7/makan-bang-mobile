@@ -92,10 +92,11 @@ class _PreferencePageState extends State<PreferencePage> {
                 kategori: item['kategori'] ?? '',
                 lokasi: item['lokasi'] ?? '',
                 price: int.tryParse(item['price']?.toString() ?? '0') ?? 0,
-                nutrition: '',
+                nutrition: item['nutrition']?.toString() ?? '',
                 description: item['description'] ?? '',
                 linkGofood: item['link_gofood'] ?? '',
                 isDatasetProduct: true,
+                bookmarked: [],
               ),
             );
           }).whereType<Product>().toList();

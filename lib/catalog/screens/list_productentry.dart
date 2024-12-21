@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:makan_bang/catalog/models/product_entry.dart'; // Model yang sudah diperbarui
 import 'package:makan_bang/catalog/screens/productdetail.dart';
@@ -29,6 +31,15 @@ double getScaleFactor(double width) {
 }
 
 class _ProductEntryPageState extends State<ProductEntryPage> {
+  late Future<List<Product>> _productFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    final request = Provider.of<CookieRequest>(context, listen: false);
+    _productFuture = fetchProducts(request); // Initialize Future here
+  }
+
   Future<List<Product>> fetchProducts(CookieRequest request) async {
     final response = await request.get('http://127.0.0.1:8000/katalog/json/');
     List<Product> productList = [];
@@ -39,6 +50,7 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
     }
     return productList;
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +84,7 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
             ? const ShopFloatingActionButton() // Tampilkan FAB hanya untuk admin
             : null,
         body: FutureBuilder(
-            future: fetchProducts(request),
+            future: _productFuture,
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.data == null) {
                 return const Center(child: CircularProgressIndicator());
@@ -97,7 +109,7 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                       ),
                       itemCount: snapshot.data.length,
                       itemBuilder: (_, index) {
-                        final product = snapshot.data[index];
+                        Product product = snapshot.data[index];
                         return LayoutBuilder(builder: (context, constraints) {
                           // Batasi ukuran lebar item untuk mencegah overflow pada layar besar
                           double itemWidth = constraints.maxWidth > maxWidth
@@ -136,149 +148,219 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                               borderRadius:
                                   BorderRadius.circular(16 * scaleFactor),
                             ),
-                            child: InkWell(
-                              splashColor: Colors.blue.withAlpha(30),
-                              onTap: () {
-                                if (!request.loggedIn) {
-                                  // Redirect ke Login Page jika user belum login
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
+                            child: Stack(children: [
+                              InkWell(
+                                splashColor: Colors.blue.withAlpha(30),
+                                onTap: () {
+                                  if (!request.loggedIn) {
+                                    // Redirect ke Login Page jika user belum login
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LoginPage()),
+                                    );
+                                  } else {
+                                    // Jika sudah login, redirect ke ProductDetailPage
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
                                         builder: (context) =>
-                                            const LoginPage()),
-                                  );
-                                  // Ganti '/login' dengan route halaman login Anda
-                                } else {
-                                  // Jika sudah login, redirect ke ProductDetailPage
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          ProductDetailPage(product: product),
-                                    ),
-                                  );
-                                }
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.circular(16 * scaleFactor),
-                                  color: Colors.white,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Gambar Produk
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(16 * scaleFactor),
+                                            ProductDetailPage(product: product),
                                       ),
-                                      child:
-                                          product.fields.pictureLink.isNotEmpty
-                                              ? Image.network(
-                                                  product.fields.pictureLink,
-                                                  height: imageHeight,
-                                                  width: double.infinity,
-                                                  fit: BoxFit.cover,
-                                                )
-                                              : Image(
-                                                  image: const AssetImage(
-                                                      'assets/placeholder.jpg'),
-                                                  height: 180 * scaleFactor,
-                                                  width: double.infinity,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.all(10 * scaleFactor),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          // Nama Produk
-                                          Text(
-                                            product.fields.item,
-                                            style: TextStyle(
-                                              fontSize: fontSize,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          // Kategori Produk
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: categoryPadding,
-                                              vertical: categoryPadding,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey.shade700,
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            child: Text(
-                                              product.fields.kategori,
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.circular(16 * scaleFactor),
+                                    color: Colors.white,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // Gambar Produk
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.vertical(
+                                          top:
+                                              Radius.circular(16 * scaleFactor),
+                                        ),
+                                        child: product
+                                                .fields.pictureLink.isNotEmpty
+                                            ? Image.network(
+                                                product.fields.pictureLink,
+                                                height: imageHeight,
+                                                width: double.infinity,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Image(
+                                                image: const AssetImage(
+                                                    'assets/placeholder.jpg'),
+                                                height: 180 * scaleFactor,
+                                                width: double.infinity,
+                                                fit: BoxFit.cover,
+                                              ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            EdgeInsets.all(10 * scaleFactor),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            // Nama Produk
+                                            Text(
+                                              product.fields.item,
                                               style: TextStyle(
-                                                fontSize: categoryFontSize,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w600,
+                                                fontSize: fontSize,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
                                               ),
+                                              overflow: TextOverflow.ellipsis,
                                             ),
-                                          ),
-                                          SizedBox(height: 8 * scaleFactor),
-                                          // Harga Produk
-                                          Text(
-                                            'Price: \Rp${product.fields.price}',
-                                            style: TextStyle(
-                                              fontSize: priceFontSize,
-                                              color: Colors.green,
-                                            ),
-                                          ),
-                                          SizedBox(height: 8 * scaleFactor),
-                                          // Nama Restoran
-                                          Row(
-                                            children: [
-                                              Icon(
-                                                Icons.restaurant,
-                                                size: 20 * scaleFactor,
-                                                color: Colors.grey,
+                                            // Kategori Produk
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: categoryPadding,
+                                                vertical: categoryPadding,
                                               ),
-                                              SizedBox(width: 8 * scaleFactor),
-                                              Expanded(
-                                                child: Text(
-                                                  product.fields.restaurant,
-                                                  style: TextStyle(
-                                                    fontSize: fontSize * 0.8,
-                                                    color: Colors.grey,
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey.shade700,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: Text(
+                                                product.fields.kategori,
+                                                style: TextStyle(
+                                                  fontSize: categoryFontSize,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w600,
                                                 ),
                                               ),
-                                            ],
-                                          ),
-                                        ],
+                                            ),
+                                            SizedBox(height: 8 * scaleFactor),
+                                            // Harga Produk
+                                            Text(
+                                              'Price: \Rp${product.fields.price}',
+                                              style: TextStyle(
+                                                fontSize: priceFontSize,
+                                                color: Colors.green,
+                                              ),
+                                            ),
+                                            SizedBox(height: 8 * scaleFactor),
+                                            // Nama Restoran
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.restaurant,
+                                                  size: 20 * scaleFactor,
+                                                  color: Colors.grey,
+                                                ),
+                                                SizedBox(
+                                                    width: 8 * scaleFactor),
+                                                Expanded(
+                                                  child: Text(
+                                                    product.fields.restaurant,
+                                                    style: TextStyle(
+                                                      fontSize: fontSize * 0.8,
+                                                      color: Colors.grey,
+                                                    ),
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    const Spacer(),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10 * scaleFactor),
-                                      child: user.name == 'admin'
-                                          ? ProductCardActions(
-                                              product: product,
-                                              onUpdateSuccess: () {
-                                                setState(() {});
-                                              },
-                                            )
-                                          : const SizedBox.shrink(),
-                                    ),
-                                    SizedBox(height: 10 * scaleFactor),
-                                  ],
+                                      const Spacer(),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10 * scaleFactor),
+                                        child: user.name == 'admin'
+                                            ? ProductCardActions(
+                                                product: product,
+                                                onUpdateSuccess: () {
+                                                  setState(() {});
+                                                },
+                                              )
+                                            : const SizedBox.shrink(),
+                                      ),
+                                      SizedBox(height: 10 * scaleFactor),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
+                              // Top-Right Button
+                              // Top-Right Button
+                              Positioned(
+                                top: 8 * scaleFactor,
+                                right: 8 * scaleFactor,
+                                child: SizedBox(
+                                  height: 32 * scaleFactor,
+                                  width: 32 * scaleFactor,
+                                  child: StatefulBuilder(
+                                    builder: (context, setState) {
+                                      return IconButton(
+                                        // Tambahkan "return" di sini
+                                        icon: Icon(
+                                          product.fields.bookmarked.contains(user.id)
+                                              ? Icons.favorite
+                                              : Icons.favorite_border,
+                                          color: product.fields.bookmarked.contains(user.id)
+                                              ? Colors.red
+                                              : Colors.grey,
+                                          size: 20,
+                                        ),
+
+                                        onPressed: () async {
+                                          final userId =
+                                              user.id; // ID user saat ini
+
+                                          try {
+                                            final endpoint =
+                                                'http://127.0.0.1:8000/bookmark/toggle-bookmark-flutter/${product.pk}/';
+
+                                            // Kirim request ke server
+                                            final response = await request.post(
+                                              endpoint,
+                                              jsonEncode(
+                                                  {"product_id": product.pk}),
+                                            );
+
+                                            if (response['success'] == true) {
+                                              // Perbarui status berdasarkan respons server
+                                              setState(() {
+                                                if (response['bookmarked'] ==
+                                                    true) {
+                                                  product.fields.bookmarked
+                                                      .add(userId);
+                                                } else {
+                                                  product.fields.bookmarked
+                                                      .remove(userId);
+                                                }
+                                                setState(() {
+                                                  _productFuture = fetchProducts(request); // Refetch data
+                                                });
+                                              });
+                                            } else {
+                                              throw Exception(
+                                                  "Failed to toggle bookmark: ${response['message']}");
+                                            }
+                                          } catch (e) {
+                                            print("Error: $e");
+                                          }
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ]),
                           );
                         });
                       });
