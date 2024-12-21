@@ -4,6 +4,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'register.dart';
 import 'package:makan_bang/screens/menu.dart';
+import 'package:makan_bang/widgets/left_drawer.dart';
 
 void main() {
   runApp(const LoginApp());
@@ -54,8 +55,17 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: const Text(
+          'MAKAN BANG',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
+      drawer: const LeftDrawer(),
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16.0 * widthMultiplier.clamp(0.8, 1.2)),

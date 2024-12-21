@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:makan_bang/screens/login.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:makan_bang/widgets/left_drawer.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -32,14 +33,17 @@ class _RegisterPageState extends State<RegisterPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Register'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+        title: const Text(
+          'MAKAN BANG',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
         ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
+      drawer: const LeftDrawer(),
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16.0 * widthMultiplier.clamp(0.8, 1.2)),
@@ -67,7 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      Wrap( // Using Wrap instead of Row
+                      Wrap(
                         alignment: WrapAlignment.center,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
