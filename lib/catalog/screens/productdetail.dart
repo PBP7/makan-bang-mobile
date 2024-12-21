@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:makan_bang/catalog/models/product_entry.dart';
-
+import 'package:url_launcher/url_launcher.dart'; // Import url_launcher
 class ProductDetailPage extends StatelessWidget {
   final Product product;
 
-  const ProductDetailPage({super.key, required this.product}); // Gunakan parameter yang wajib
+  const ProductDetailPage({super.key, required this.product}); // Gunakan parameter yang 
+  // Fungsi untuk membuka link
+  Future<void> _launchGoFoodLink(String url) async {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication); // Buka di aplikasi eksternal
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,47 +73,55 @@ class ProductDetailPage extends StatelessWidget {
               const SizedBox(height: 10),
               // Nama Restoran
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start, // Pastikan icon tetap di atas
+
                 children: [
                   const Icon(Icons.restaurant, size: 20, color: Colors.grey),
                   const SizedBox(width: 5),
-                  Text(
-                    product.fields.restaurant,
-                    style: const TextStyle(fontSize: 16.0, color: Colors.grey),
+                  Flexible( // Ganti Expanded menjadi Flexible
+                    child: Text(
+                      product.fields.lokasi,
+                      style: const TextStyle(fontSize: 16.0, color: Colors.grey),
+                      overflow: TextOverflow.visible, // Biarkan teks meluas jika perlu
+                      maxLines: null, // Izinkan teks turun ke bawah
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 10),
               // Lokasi
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start, // Pastikan icon tetap di atas
                 children: [
                   const Icon(Icons.location_on, size: 20, color: Colors.grey),
                   const SizedBox(width: 5),
-                  Expanded(
+                  Flexible( // Ganti Expanded menjadi Flexible
                     child: Text(
                       product.fields.lokasi,
                       style: const TextStyle(fontSize: 16.0, color: Colors.grey),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
+                      overflow: TextOverflow.visible, // Biarkan teks meluas jika perlu
+                      maxLines: null, // Izinkan teks turun ke bawah
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 10),
-              // Nutrisi
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start, // Pastikan icon tetap di atas
                 children: [
                   const Icon(Icons.info_outline, size: 20, color: Colors.grey),
                   const SizedBox(width: 5),
-                  Expanded(
+                  Flexible( // Ganti Expanded menjadi Flexible
                     child: Text(
                       product.fields.nutrition,
                       style: const TextStyle(fontSize: 16.0, color: Colors.grey),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                      overflow: TextOverflow.visible, // Biarkan teks meluas jika perlu
+                      maxLines: null, // Izinkan teks turun ke bawah
                     ),
                   ),
                 ],
               ),
+
               const SizedBox(height: 10),
               // Link GoFood
               Row(
@@ -115,9 +131,7 @@ class ProductDetailPage extends StatelessWidget {
                   GestureDetector(
                     onTap: () {
                       // Tindakan ketika link GoFood diklik
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Navigating to GoFood: ${product.fields.linkGofood}')),
-                      );
+                      _launchGoFoodLink(product.fields.linkGofood);
                     },
                     child: const Text(
                       'View in GoFood',
@@ -133,7 +147,7 @@ class ProductDetailPage extends StatelessWidget {
               const SizedBox(height: 20),
               // Harga
               Text(
-                "Price: \$${product.fields.price}",
+                "Price: \Rp${product.fields.price}",
                 style: const TextStyle(
                   fontSize: 24.0,
                   color: Colors.green,

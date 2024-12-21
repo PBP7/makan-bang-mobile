@@ -29,14 +29,16 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'Mental Health Tracker',
+        title: 'MAKAN BANG',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSwatch(
-            primarySwatch: Colors.deepPurple,
-          ).copyWith(secondary: Colors.deepPurple[400]),
+          colorScheme: ColorScheme.light(
+            primary: Colors.amber[50]!,
+            secondary: Colors.amber[100]!,
+          ),
         ),
-        home: const LoginPage(),  // Halaman login yang akan memulai aplikasi
+        home: MyHomePage(),  // Halaman login yang akan memulai aplikasi
+
       ),
     );
   }

@@ -17,19 +17,19 @@ class ProductCardActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
-    
+
     // Get screen width
     double screenWidth = MediaQuery.of(context).size.width;
-    
+
     // Calculate scaleFactor dengan batas maksimum
     double scaleFactor = (screenWidth / 1400).clamp(0.8, 12.0);
-    
+
     // Responsive sizes untuk button
     double buttonHeight = 32 * scaleFactor;
     double buttonWidth = 80 * scaleFactor;
     double iconSize = 16 * scaleFactor;
     double fontSize = 12 * scaleFactor;
-    
+
     // Padding yang responsif
     double horizontalPadding = 8 * scaleFactor;
     double verticalPadding = 4 * scaleFactor;
@@ -41,15 +41,14 @@ class ProductCardActions extends StatelessWidget {
         SizedBox(
           height: buttonHeight,
           width: buttonWidth,
-          child: ElevatedButton(
+          child: OutlinedButton(
             onPressed: () {
-              // Navigasi ke halaman form edit dan kirimkan produk yang akan diedit
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ProductEntryEditPage(          
+                  builder: (context) => ProductEntryEditPage(
                     productData: {
-                      'pk' : product.pk,
+                      'pk': product.pk,
                       'item': product.fields.item,
                       'picture_link': product.fields.pictureLink,
                       'description': product.fields.description,
@@ -60,15 +59,14 @@ class ProductCardActions extends StatelessWidget {
                       'link_gofood': product.fields.linkGofood,
                       'nutrition': product.fields.nutrition,
                     },
-                    product: product, 
-                  )
-
+                    product: product,
+                  ),
                 ),
-              ).then((_) => onUpdateSuccess());  // Update setelah kembali dari form
+              ).then((_) => onUpdateSuccess());
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange,
-              foregroundColor: Colors.white,
+            style: OutlinedButton.styleFrom(
+              backgroundColor: Colors.white, // Fill color
+              side: BorderSide(color: Colors.orange, width: 2), // Yellow border
               padding: EdgeInsets.symmetric(
                 horizontal: horizontalPadding,
                 vertical: verticalPadding,
@@ -80,26 +78,28 @@ class ProductCardActions extends StatelessWidget {
                 Icon(
                   Icons.edit,
                   size: iconSize,
+                  color: Colors.orange, // Icon color
                 ),
                 SizedBox(width: 10 * scaleFactor),
                 Text(
                   "Edit",
                   style: TextStyle(
                     fontSize: fontSize,
+                    color: Colors.orange, // Text color
                   ),
                 ),
               ],
             ),
           ),
         ),
-        
-        SizedBox(width: 8 * scaleFactor), // Spacing antara button
-        
+
+        SizedBox(width: 8 * scaleFactor), // Spacing between buttons
+
         // Delete Button
         SizedBox(
           height: buttonHeight,
           width: buttonWidth,
-          child: ElevatedButton(
+          child: OutlinedButton(
             onPressed: () async {
               bool confirm = await showDialog(
                 context: context,
@@ -170,9 +170,9 @@ class ProductCardActions extends StatelessWidget {
                 }
               }
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
+            style: OutlinedButton.styleFrom(
+              backgroundColor: Colors.white, // Fill color
+              side: BorderSide(color: Colors.red, width: 2), // Red border
               padding: EdgeInsets.symmetric(
                 horizontal: horizontalPadding,
                 vertical: verticalPadding,
@@ -184,12 +184,14 @@ class ProductCardActions extends StatelessWidget {
                 Icon(
                   Icons.delete,
                   size: iconSize,
+                  color: Colors.red, // Icon color
                 ),
                 SizedBox(width: 10 * scaleFactor),
                 Text(
                   "Delete",
                   style: TextStyle(
                     fontSize: fontSize,
+                    color: Colors.red, // Text color
                   ),
                 ),
               ],
