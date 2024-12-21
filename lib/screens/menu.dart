@@ -3,93 +3,149 @@ import 'package:makan_bang/widgets/left_drawer.dart';
 import 'package:makan_bang/widgets/mood_card.dart';
 
 class MyHomePage extends StatelessWidget {
-  final String npm = 'PBP 7'; // NPM
-  final String name = 'MAKAN BANG'; // Nama
-  final String className = 'PBP B'; // Kelas
-
   final List<ItemHomepage> items = [
-         ItemHomepage("Lihat Mood", Icons.mood),
-         ItemHomepage("Tambah Mood", Icons.add),
-         ItemHomepage("Logout", Icons.logout),
-     ];
+    ItemHomepage("Catalogue", Icons.menu_book, Colors.blue[900]!),
+    ItemHomepage("Rate and Review ", Icons.rate_review_outlined, Colors.red),
+    ItemHomepage("Forum", Icons.emoji_people_sharp, Colors.pink[300]!),
+    ItemHomepage("Preference", Icons.fastfood_outlined, Colors.green[400]!),
+    ItemHomepage("Meal Plan", Icons.list_alt, Colors.yellow[800]!),
+    ItemHomepage("Bookmark", Icons.bookmark_add, Colors.blue[900]!),
+  ];
 
   MyHomePage({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
-    // Scaffold menyediakan struktur dasar halaman dengan AppBar dan body.
     return Scaffold(
-      // AppBar adalah bagian atas halaman yang menampilkan judul.
       appBar: AppBar(
-        // Judul aplikasi "Mental Health Tracker" dengan teks putih dan tebal.
         title: const Text(
-          'Mental Health Tracker',
+          'MAKAN BANG',
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
-        // Warna latar belakang AppBar diambil dari skema warna tema aplikasi.
         backgroundColor: Theme.of(context).colorScheme.primary,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       drawer: const LeftDrawer(),
-      // Body halaman dengan padding di sekelilingnya.
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        // Menyusun widget secara vertikal dalam sebuah kolom.
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Row untuk menampilkan 3 InfoCard secara horizontal.
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                InfoCard(title: 'NPM', content: npm),
-                InfoCard(title: 'Name', content: name),
-                InfoCard(title: 'Class', content: className),
-              ],
+            // Previous code remains the same until ExpansionTile section
+            Container(
+              width: double.infinity,
+              height: 250,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: NetworkImage(
+                    'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/static/image/heropic.png',
+                  ),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Center(
+                child: Card(
+                  elevation: 2,
+                  color: const Color.fromARGB(255, 251, 250, 246),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'Hello there, looking for something?',
+                      style: Theme.of(context).textTheme.titleMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
             ),
 
-            // Memberikan jarak vertikal 16 unit.
-            const SizedBox(height: 16.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: GridView.count(
+                primary: false,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 3,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                children: items.map((ItemHomepage item) {
+                  return ItemCard(item);
+                }).toList(),
+              ),
+            ),
 
-            // Menempatkan widget berikutnya di tengah halaman.
-            Center(
+            // Why MAKAN BANG? Section with modified ExpansionTiles
+            const Padding(
+              padding: EdgeInsets.all(16.0),
               child: Column(
-                // Menyusun teks dan grid item secara vertikal.
-
                 children: [
-                  // Menampilkan teks sambutan dengan gaya tebal dan ukuran 18.
-                  const Padding(
-                    padding: EdgeInsets.only(top: 16.0),
+                  Center(
                     child: Text(
-                      'Welcome to Mental Health Tracker',
+                      'Why MAKAN BANG?',
                       style: TextStyle(
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        fontSize: 18.0,
                       ),
                     ),
                   ),
-
-                  // Grid untuk menampilkan ItemCard dalam bentuk grid 3 kolom.
-                  GridView.count(
-                    primary: true,
-                    padding: const EdgeInsets.all(20),
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    crossAxisCount: 3,
-                    // Agar grid menyesuaikan tinggi kontennya.
-                    shrinkWrap: true,
-
-                    // Menampilkan ItemCard untuk setiap item dalam list items.
-                    children: items.map((ItemHomepage item) {
-                      return ItemCard(item);
-                    }).toList(),
+                  SizedBox(height: 16),
+                  CustomExpansionTile(
+                    title: 'Explore Jakarta\'s Food Scene',
+                    content: "Makan Bang connects you to Jakarta's bustling food scene, offering a vast selection of popular and hidden culinary gems. Filter through options to discover new flavors, from local favorites to must-try eateries. With GoFood integration, you can even order your picks directly for delivery.",
+                  ),
+                  CustomExpansionTile(
+                    title: 'Personalized Recommendations',
+                    content: "With Makan Bang's preference feature, get personalized meal recommendations that match your taste. Choose your food preferences, and the app will tailor suggestions to ensure you're exploring dishes that suit your palate.",
+                  ),
+                  CustomExpansionTile(
+                    title: 'Comprehensive Food Information',
+                    content: "Makan Bang provides nutritional insights into each menu item, so you know exactly what you're eating. Plan meals with an eye on health, making informed choices that align with your dietary needs and lifestyle goals.",
                   ),
                 ],
               ),
             ),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.0),
+              child: Center(
+                child: Text(
+                  'In Collaboration With',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+
+            // Image Carousel
+            const SizedBox(
+              height: 100, // Adjust height as needed
+              child: ImageCarousel(),
+            ),
+
+            const SizedBox(height: 20),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.0),
+              child: Center(
+                child: Text(
+                  'A project by group PBP B07',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 36),
           ],
         ),
       ),
@@ -97,35 +153,146 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
+class ImageCarousel extends StatefulWidget {
+  const ImageCarousel({super.key});
 
-class InfoCard extends StatelessWidget {
-  // Kartu informasi yang menampilkan title dan content.
+  @override
+  State<ImageCarousel> createState() => _ImageCarouselState();
+}
 
-  final String title;  // Judul kartu.
-  final String content;  // Isi kartu.
+class _ImageCarouselState extends State<ImageCarousel> {
+  final PageController _pageController = PageController(
+    viewportFraction: 0.8,
+  );
+  int _currentPage = 0;
 
-  const InfoCard({super.key, required this.title, required this.content});
+  final List<String> _imageUrls = [
+    'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/static/image/enjoyjkt.png',
+    'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/static/image/gofood.png',
+    'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/static/image/traveloka.png',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _startAutoScroll();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _startAutoScroll() {
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        final nextPage = (_currentPage + 1) % _imageUrls.length;
+        _pageController.animateToPage(
+          nextPage,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+        _startAutoScroll();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      // Membuat kotak kartu dengan bayangan dibawahnya.
-      elevation: 2.0,
-      child: Container(
-        // Mengatur ukuran dan jarak di dalam kartu.
-        width: MediaQuery.of(context).size.width / 3.5, // menyesuaikan dengan lebar device yang digunakan.
-        padding: const EdgeInsets.all(16.0),
-        // Menyusun title dan content secara vertikal.
-        child: Column(
-          children: [
-            Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8.0),
-            Text(content),
-          ],
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        PageView.builder(
+          controller: _pageController,
+          onPageChanged: (int page) {
+            setState(() {
+              _currentPage = page;
+            });
+          },
+          itemCount: _imageUrls.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Image.network(
+                _imageUrls[index],
+                fit: BoxFit.contain,
+              ),
+            );
+          },
         ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: _imageUrls.asMap().entries.map((entry) {
+              return Container(
+                width: 8.0,
+                height: 8.0,
+                margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _currentPage == entry.key
+                      ? Colors.black
+                      : Colors.grey,
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class CustomExpansionTile extends StatefulWidget {
+  final String title;
+  final String content;
+
+  const CustomExpansionTile({
+    super.key,
+    required this.title,
+    required this.content,
+  });
+
+  @override
+  State<CustomExpansionTile> createState() => _CustomExpansionTileState();
+}
+
+class _CustomExpansionTileState extends State<CustomExpansionTile> {
+  bool _isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8.0),
+      decoration: BoxDecoration(
+        color: _isExpanded ? const Color.fromARGB(255, 251, 250, 246) : Colors.transparent,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: ExpansionTile(
+        title: Text(
+          widget.title,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        iconColor: Colors.black,
+        collapsedIconColor: Colors.black,
+        onExpansionChanged: (expanded) {
+          setState(() {
+            _isExpanded = expanded;
+          });
+        },
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              widget.content,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+        ],
       ),
     );
   }
