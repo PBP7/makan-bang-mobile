@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:makan_bang/preference/models/preference_models.dart';
 import 'package:makan_bang/catalog/models/product_entry.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';

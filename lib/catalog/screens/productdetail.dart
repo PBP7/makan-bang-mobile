@@ -147,7 +147,7 @@ class ProductDetailPage extends StatelessWidget {
               const SizedBox(height: 20),
               // Harga
               Text(
-                "Price: \Rp${product.fields.price}",
+                "Price: Rp${product.fields.price}",
                 style: const TextStyle(
                   fontSize: 24.0,
                   color: Colors.green,

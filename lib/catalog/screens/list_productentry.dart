@@ -228,7 +228,7 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                                           SizedBox(height: 8 * scaleFactor),
                                           // Harga Produk
                                           Text(
-                                            'Price: \Rp${product.fields.price}',
+                                            'Price: Rp${product.fields.price}',
                                             style: TextStyle(
                                               fontSize: priceFontSize,
                                               color: Colors.green,

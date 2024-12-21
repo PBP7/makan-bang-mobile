@@ -4,10 +4,12 @@ import 'package:makan_bang/meal_planning/screens/create_mealplan.dart';
 import 'package:makan_bang/meal_planning/screens/detail_meal_plan.dart';
 import 'package:makan_bang/widgets/left_drawer.dart';
 import '../models/meal_plan_model.dart';
-import 'package:makan_bang/meal_planning/services/meal_plan_service.dart' as service;
+import 'package:makan_bang/meal_planning/widgets/meal_plan_service.dart' as service;
 import '../widgets/meal_card.dart';
 
 class MealPlanScreen extends StatefulWidget {
+  const MealPlanScreen({super.key});
+
   @override
   _MealPlanScreenState createState() => _MealPlanScreenState();
 }
@@ -82,9 +84,17 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Meal Plan'),
+        title: const Text(
+          'Meal Plan',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        centerTitle: true,
       ),
-      drawer: LeftDrawer(),
+      drawer: const LeftDrawer(),
       body: Column(
         children: [
           Padding(
@@ -93,19 +103,28 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CreateMealPlanScreen()),
+                  MaterialPageRoute(builder: (context) => const CreateMealPlanScreen()),
                 ).then((_) => _refreshMealPlans());
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF1A237E),
-                minimumSize: const Size(double.infinity, 50),
+                minimumSize: const Size(double.infinity, 45),  // Sedikit lebih tinggi
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6), // Border radius lebih kecil
+                ),
               ),
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.add, color: Colors.white),
+                children: [
+                  Icon(Icons.add, color: Colors.white, size: 20),  // Icon lebih kecil
                   SizedBox(width: 8),
-                  Text('Create a new one', style: TextStyle(color: Colors.white)),
+                  Text(
+                    'Create a new one',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,  // Ukuran text lebih kecil
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -155,70 +174,95 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                   itemBuilder: (context, index) {
                     final plan = filteredPlans[index];
                     return Card(
-                      margin: const EdgeInsets.only(bottom: 16.0),
+                      margin: const EdgeInsets.only(bottom: 12.0),  // Margin sedikit lebih kecil
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),  // Border radius lebih kecil
+                      ),
                       child: InkWell(
                         onTap: () {
-                          // Handle card tap - show more details
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MealPlanDetailScreen(
+                                mealPlan: plan,
+                                refreshMealPlans: () => _refreshMealPlans(),
+                              ),
+                            ),
+                          );
                         },
                         child: Row(
                           children: [
                             Container(
-                              width: 100,
-                              height: 100,
+                              width: 90,  // Sedikit lebih kecil
+                              height: 90,
                               decoration: BoxDecoration(
-                                color: const Color.fromARGB(255, 52, 80, 172).withOpacity(0.2), // Warna lembut untuk latar belakang
+                                color: const Color.fromARGB(255, 52, 80, 172).withOpacity(0.2),
                                 borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(4),
-                                  bottomLeft: Radius.circular(4),
+                                  topLeft: Radius.circular(6),
+                                  bottomLeft: Radius.circular(6),
                                 ),
                               ),
                               child: const Center(
                                 child: Icon(
-                                  Icons.set_meal, // Ikon piring yang lebih cocok
-                                  size: 48,
-                                  color: Color.fromARGB(78, 33, 10, 151),
+                                  Icons.local_pizza_rounded,
+                                  size: 40,  // Icon sedikit lebih kecil
+                                  color: Color.fromARGB(207, 17, 2, 92),
                                 ),
                               ),
                             ),
-                           Expanded(
+                            Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.all(16.0),
+                                padding: const EdgeInsets.all(12.0),  // Padding sedikit lebih kecil
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       plan.fields.title,
                                       style: const TextStyle(
-                                        fontSize: 18,
+                                        fontSize: 16,  // Ukuran font lebih kecil
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    const SizedBox(height: 8),
+                                    const SizedBox(height: 4),  // Spacing lebih kecil
                                     Text(
                                       'Date: ${DateFormat('MMMM, dd yyyy').format(plan.fields.date)}',
-                                      style: const TextStyle(color: Colors.grey),
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 12,  // Text lebih kecil
+                                      ),
                                     ),
                                     Text(
                                       'Time: ${plan.fields.time}',
-                                      style: const TextStyle(color: Colors.grey),
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 12,
+                                      ),
                                     ),
                                     Align(
                                       alignment: Alignment.centerRight,
                                       child: TextButton(
-                                         onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => MealPlanDetailScreen(
-                                                  mealPlan: plan,
-                                                  refreshMealPlans: () => _refreshMealPlans(),
-                                                ),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => MealPlanDetailScreen(
+                                                mealPlan: plan,
+                                                refreshMealPlans: () => _refreshMealPlans(),
                                               ),
-                                            );
-                                          },
+                                            ),
+                                          );
+                                        },
+                                        style: TextButton.styleFrom(
+                                          padding: EdgeInsets.zero,  // Mengurangi padding button
+                                          minimumSize: Size.zero,
+                                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        ),
                                         child: const Text(
                                           'see more →',
-                                          style: TextStyle(color: Colors.orange),
+                                          style: TextStyle(
+                                            color: Colors.orange,
+                                            fontSize: 12,
+                                          ),
                                         ),
                                       ),
                                     ),

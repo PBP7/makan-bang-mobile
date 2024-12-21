@@ -4,13 +4,6 @@ import 'package:makan_bang/widgets/mood_card.dart';
 
 class MyHomePage extends StatelessWidget {
   final List<ItemHomepage> items = [
-<<<<<<< HEAD
-         ItemHomepage("Lihat Mood", Icons.mood),
-         ItemHomepage("Tambah Mood", Icons.add),
-         ItemHomepage("Meal Planning", Icons.calendar_month),
-         ItemHomepage("Logout", Icons.logout),
-     ];
-=======
     ItemHomepage("Catalogue", Icons.menu_book, Colors.blue[900]!),
     ItemHomepage("Rate and Review ", Icons.rate_review_outlined, Colors.red),
     ItemHomepage("Forum", Icons.emoji_people_sharp, Colors.pink[300]!),
@@ -18,7 +11,6 @@ class MyHomePage extends StatelessWidget {
     ItemHomepage("Meal Plan", Icons.list_alt, Colors.yellow[800]!),
     ItemHomepage("Bookmark", Icons.bookmark_add, Colors.blue[900]!),
   ];
->>>>>>> 728221ba4895c86db3aa55d2c71d8e3f55259280
 
   MyHomePage({super.key});
 

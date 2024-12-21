@@ -5,7 +5,7 @@ class FoodCard extends StatelessWidget {
   final Fields food;
   final bool isSelected;
 
-  const FoodCard({Key? key, required this.food, required this.isSelected}) : super(key: key);
+  const FoodCard({super.key, required this.food, required this.isSelected, required double imageHeightFraction, required TextStyle textStyle});
 
   @override
   Widget build(BuildContext context) {

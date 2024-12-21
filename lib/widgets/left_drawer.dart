@@ -104,7 +104,7 @@ class LeftDrawer extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const ForumPage()),
+                        MaterialPageRoute(builder: (context) => const MealPlanScreen()),
                       );
                     },
                   ),
@@ -255,69 +255,6 @@ class LeftDrawer extends StatelessWidget {
             ),
           ],
         ),
-<<<<<<< HEAD
-        Padding(padding: EdgeInsets.all(8)),
-        Text(
-          "Ayo jaga kesehatan mentalmu setiap hari disini!",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 15,
-            color: Colors.white,
-            fontWeight: FontWeight.normal,
-          ),
-        ),
-      ],
-    ),
-          ),
-  ListTile(
-    leading: const Icon(Icons.home_outlined),
-    title: const Text('Halaman Utama'),
-    // Bagian redirection ke MyHomePage
-    onTap: () {
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MyHomePage(),
-          ));
-    },
-  ),
-  ListTile(
-    leading: const Icon(Icons.mood),
-    title: const Text('Lihat Menu'),
-    // Bagian redirection ke MoodEntryFormPage
-    onTap: () {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ProductEntryFormPage(),
-          ));
-    },
-  ),
-  ListTile(
-    leading: const Icon(Icons.add_reaction_rounded),
-    title: const Text('Daftar Mood'),
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ProductEntryPage()),
-      );
-    },
-  ),
-  ListTile(
-    leading: const Icon(Icons.calendar_month),
-    title: const Text('Meal Planning'),
-    // Bagian redirection ke MyHomePage
-    onTap: () {
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MealPlanScreen(),
-          ));
-    },
-  ),
-        ],
-=======
->>>>>>> 728221ba4895c86db3aa55d2c71d8e3f55259280
       ),
     );
   }

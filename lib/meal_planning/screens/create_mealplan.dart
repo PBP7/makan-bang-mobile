@@ -2,31 +2,43 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:makan_bang/catalog/models/product_entry.dart' as catalog;
-import 'package:makan_bang/meal_planning/screens/add_meal_plan.dart';
+import 'package:makan_bang/catalog/models/product_entry.dart';
 import 'package:makan_bang/meal_planning/screens/first_page_meal_plan.dart';
 import 'package:makan_bang/meal_planning/screens/food_choices.dart';
-import 'package:makan_bang/meal_planning/widgets/date_picker.dart';
-import 'package:makan_bang/meal_planning/widgets/time_picker.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import '../models/meal_plan_model.dart';
-import 'package:makan_bang/meal_planning/services/meal_plan_service.dart' as service;
+import 'package:makan_bang/meal_planning/widgets/meal_plan_service.dart' as service;
 
 class CreateMealPlanScreen extends StatefulWidget {
   final MealPlan? mealPlan;
-  const CreateMealPlanScreen({Key? key, this.mealPlan}) : super(key: key);
+  final String? initialTitle;
+  final String? initialDate;
+  final TimeOfDay? initialTime;
+  final List<Product>? initialFoodItems;
+
+  const CreateMealPlanScreen({
+    super.key, 
+    this.mealPlan,
+    this.initialTitle,
+    this.initialDate,
+    this.initialTime,
+    this.initialFoodItems,
+  });
 
   @override
   _CreateMealPlanScreenState createState() => _CreateMealPlanScreenState();
 }
 
 class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
-  final mealPlanService = service.MealPlanService(baseUrl: 'http://127.0.0.1:8000/meal-planning/json/');  // Updated API endpoint
   final TextEditingController _titleController = TextEditingController();
+  final mealPlanService = service.MealPlanService(baseUrl: 'http://127.0.0.1:8000/meal-planning/json/');
+  
   String? selectedDate;
   TimeOfDay? selectedTime;
-  List<catalog.Product> foodItems = [];
+  List<Product> foodItems = [];
   bool isEditing = false;
 
   @override
@@ -37,34 +49,26 @@ class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
     }
   }
 
+  @override
+  void dispose() {
+    _titleController.dispose();
+    super.dispose();
+  }
+
   void _initializeForEditing() {
     isEditing = true;
-
-    if (widget.mealPlan != null) {
-      _titleController.text = widget.mealPlan!.fields.title;
-
-      try {
-        DateTime parsedDate = widget.mealPlan!.fields.date;
-        selectedDate = "${parsedDate.year}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.day.toString().padLeft(2, '0')}";
-      } catch (e) {
-        selectedDate = DateTime.now().toString().split(' ')[0];
-      }
-
-      try {
-        final timeStr = widget.mealPlan!.fields.time;
-        final timeParts = timeStr.split(':');
-        selectedTime = TimeOfDay(
-          hour: int.parse(timeParts[0]),
-          minute: int.parse(timeParts[1]),
-        );
-      } catch (e) {
-        selectedTime = TimeOfDay.now();
-      }
+    if (widget.initialTitle != null) _titleController.text = widget.initialTitle!;
+    if (widget.initialDate != null) selectedDate = widget.initialDate;
+    if (widget.initialTime != null) selectedTime = widget.initialTime;
+    if (widget.initialFoodItems != null) {
+      foodItems = List.from(widget.initialFoodItems!);
     }
   }
 
   void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message))
+    );
   }
 
   Future<void> _saveMealPlan(CookieRequest request) async {
@@ -74,240 +78,334 @@ class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
     }
 
     String formattedTime = "${selectedTime!.hour.toString().padLeft(2, '0')}:${selectedTime!.minute.toString().padLeft(2, '0')}";
-    DateTime parsedDate = DateTime.parse(selectedDate!);
-    String formattedDate = "${parsedDate.year}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.day.toString().padLeft(2, '0')}";
-
-    final encodedData = jsonEncode({
-      'title': _titleController.text,
-      'selected_date': formattedDate,
-      'time': formattedTime,
-      'foodItems': foodItems.map((item) => item.pk).toList(),
-    });
 
     try {
-      final endpoint = isEditing
+      final endpoint = isEditing 
           ? 'http://127.0.0.1:8000/meal-planning/${widget.mealPlan!.pk}/update/'
           : 'http://127.0.0.1:8000/meal-planning/finish-json/';
 
-      final response = await request.postJson(endpoint, encodedData);
+      final response = await request.postJson(
+        endpoint,
+        jsonEncode({
+          'title': _titleController.text,
+          'selected_date': selectedDate,
+          'time': formattedTime,
+          'foodItems': foodItems.map((item) => item.pk).toList(),
+        })
+      );
+
       if (response['status'] == 'success') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(isEditing ? "Meal Plan successfully updated!" : "New Meal Plan successfully saved!")),
-        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(content: Text(isEditing ? "Meal Plan updated!" : "Meal Plan saved!")),
+        // );
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => MealPlanScreen()),
+          MaterialPageRoute(builder: (context) => const MealPlanScreen()),
         );
       } else {
         _showErrorSnackBar("Error: ${response['message']}");
       }
     } catch (e) {
+      // print("Error during save: $e");
       _showErrorSnackBar("Error: $e");
     }
   }
 
   void _pickDate() async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: selectedDate != null
-          ? DateTime.parse(selectedDate!)
-          : DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
-    );
+  final DateTime? pickedDate = await showDatePicker(
+    context: context,
+    initialDate: selectedDate != null 
+        ? DateTime.parse(selectedDate!)
+        : DateTime.now(),
+    firstDate: DateTime.now(),
+    lastDate: DateTime(2100),
+    builder: (BuildContext context, Widget? child) {
+      return Theme(
+        data: ThemeData.light().copyWith(
+          colorScheme: const ColorScheme.light(
+            primary: Colors.black, // Header background color
+            onPrimary: Colors.white, // Header text color
+            onSurface: Colors.black, // Body text color
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.black, // Button text color
+            ),
+          ),
+        ),
+        child: child!,
+      );
+    },
+  );
 
-    if (pickedDate != null) {
-      setState(() {
-        selectedDate = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-      });
-    }
+  if (pickedDate != null) {
+    setState(() {
+      selectedDate = "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+    });
   }
+}
 
 
   void _pickTime() async {
-    TimeOfDay? pickedTime = await showTimePicker(
-      context: context,
-      initialTime: selectedTime ?? TimeOfDay.now(),
-    );
-    if (pickedTime != null) {
-      setState(() {
-        selectedTime = pickedTime;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final request = context.watch<CookieRequest>();
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(isEditing ? 'Edit Meal Plan' : 'Create Your Meal Plan'),
-        actions: [
-          TextButton(
-            onPressed: () => _saveMealPlan(request),
-            child: Text(isEditing ? "Update" : "Save", style: const TextStyle(color: Colors.blue)),
+  final TimeOfDay? pickedTime = await showTimePicker(
+    context: context,
+    initialTime: selectedTime ?? TimeOfDay.now(),
+    builder: (BuildContext context, Widget? child) {
+      return Theme(
+        data: ThemeData.light().copyWith(
+          colorScheme: const ColorScheme.light(
+            primary: Colors.black, // Header background color
+            onPrimary: Colors.white, // Header text color
+            onSurface: Colors.black, // Body text color
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel", style: TextStyle(color: Colors.red)),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.black, // Button text color
+            ),
           ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _titleController,
-              decoration: const InputDecoration(
-                labelText: "Title",
-                hintText: "Enter the meal plan title",
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: _buildFoodItemsCard(),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildDateTimePicker(),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ),
-      ),
-    );
-  }
+        child: child!,
+      );
+    },
+  );
 
-  Widget _buildFoodItemsCard() {
-    return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(8.0),
+  if (pickedTime != null) {
+    setState(() {
+      selectedTime = pickedTime;
+    });
+  }
+}
+
+  
+@override
+Widget build(BuildContext context) {
+  final request = context.watch<CookieRequest>();
+  return Scaffold(
+    backgroundColor: Colors.white,
+    appBar: AppBar(
+      elevation: 0,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.black),
+        onPressed: () => Navigator.pop(context),
+      ),
+      title: Text(
+        isEditing ? 'Edit Your Meal Plan' : 'Create Your Meal Plan',
+        style: const TextStyle(color: Colors.black),
+      ),
+      backgroundColor: Theme.of(context).colorScheme.primary,
+    ),
+    body: Column(
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title
+                TextField(
+                  controller: _titleController,  // Ini akan otomatis terisi dari _initializeForEditing()
+                  decoration: const InputDecoration(
+                    hintText: "Write the title here",
+                    border: UnderlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Date
+                GestureDetector(
+                  onTap: _pickDate,
+                  child: Row(
+                    children: [
+                      const Icon(Icons.calendar_today, color:Color.fromARGB(255, 0, 0, 0)),
+                      const SizedBox(width: 12),
+                      Text(
+                        selectedDate != null 
+                          ? DateFormat('MMMM, dd yyyy').format(DateTime.parse(selectedDate!))
+                          : 'Choose the date',
+                        style: const TextStyle(color: Color.fromARGB(255, 63, 62, 67)),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Time
+                GestureDetector(
+                  onTap: _pickTime,
+                  child: Row(
+                    children: [
+                      const Icon(Icons.access_time, color: Color.fromARGB(255, 0, 0, 0)),
+                      const SizedBox(width: 12),
+                      Text(
+                        selectedTime != null 
+                          ? selectedTime!.format(context)
+                          : 'Choose the time',
+                        style: const TextStyle(color: Color.fromARGB(255, 63, 62, 67)),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Food Added Text
+                // Food Added Section
+const Text(
+  'Food added:',
+  style: TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 16,
+  ),
+),
+const SizedBox(height: 12),
+
+// Food Items Container
+Container(
+  height: MediaQuery.of(context).size.height * 0.45, // Tinggi diatur 45% dari screen height
+  padding: const EdgeInsets.all(16),
+  decoration: BoxDecoration(
+    color: Colors.white,
+    border: Border.all(color: Colors.grey.shade300),
+    borderRadius: BorderRadius.circular(8),
+  ),
+  child: Stack(
+    children: [
+      // Food Items List
+      foodItems.isEmpty
+        ? const Center(
             child: Text(
-              'Food Added',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.red,
-              ),
+              'No food items added yet',
+              style: TextStyle(color: Colors.grey),
             ),
-          ),
-          Expanded(
-            child: foodItems.isNotEmpty
-                ? _buildFoodItemsGrid()
-                : const Center(child: Text("No food items added yet.")),
-          ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: IconButton(
-              icon: const Icon(Icons.add_circle, size: 48),
-              color: Colors.blue,
-              onPressed: () async {
-                final selectedFoods = await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => FoodChoicesScreen()),
-                );
-                if (selectedFoods != null) {
-                  setState(() {
-                    foodItems.addAll(selectedFoods);
-                  });
-                }
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFoodItemsGrid() {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        mainAxisSpacing: 8,
-        crossAxisSpacing: 8,
-      ),
-      itemCount: foodItems.length,
-      itemBuilder: (context, index) {
-        return Stack(
-          children: [
-            Card(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Container(
-                      color: Colors.grey[200],
+          )
+        : ListView.builder(
+            shrinkWrap: true,
+            itemCount: foodItems.length,
+            itemBuilder: (context, index) {
+              final food = foodItems[index];
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                height: 60, // Card height diperkecil
+                child: Row(
+                  children: [
+                    // Food Image
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
                       child: Image.network(
-                        foodItems[index].fields.pictureLink,
+                        food.fields.pictureLink,
+                        width: 45, // Image width diperkecil
+                        height: 45, // Image height diperkecil
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.broken_image, color: Colors.red);
-                        },
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(foodItems[index].fields.item),
-                  ),
-                ],
-              ),
-            ),
-            Positioned(
-              right: 0,
-              top: 0,
-              child: IconButton(
-                icon: const Icon(Icons.remove_circle, color: Colors.red),
-                onPressed: () {
-                  setState(() {
-                    foodItems.removeAt(index);
-                  });
-                },
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildDateTimePicker() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Select Your Right Time',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.red,
-              ),
-            ),
-            const SizedBox(height: 16),
-            DatePickerWidget(
-              selectedDate: selectedDate,
-              onPickDate: _pickDate,
-            ),
-            TimePickerWidget(
-              selectedTime: selectedTime,
-              onPickTime: _pickTime,
-            ),
-          ],
+                    const SizedBox(width: 12),
+                    // Food Name
+                    Expanded(
+                      child: Text(
+                        food.fields.item,
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+                    // Remove Button
+                    IconButton(
+                      icon: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.remove,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                      ),
+                      onPressed: () {
+                        setState(() => foodItems.remove(food));
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+      // Add Button
+      Positioned(
+        right: 0,
+        bottom: 0,
+        child: Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: Colors.orange,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: IconButton(
+            padding: EdgeInsets.zero,
+            icon: const Icon(Icons.add, color: Colors.white, size: 20),
+            onPressed: () async {
+              final selectedFoods = await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const FoodChoicesScreen()),
+              );
+              if (selectedFoods != null) {
+                setState(() {
+                  foodItems.addAll(selectedFoods);
+                });
+              }
+            },
+          ),
         ),
       ),
-    );
-  }
+    ],
+  ),
+),
+const SizedBox(height: 16), // Spacing sebelum buttons
+              ],
+            ),
+          ),
+        ),
+        // Bottom Buttons
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                spreadRadius: 1,
+                blurRadius: 5,
+                offset: const Offset(0, -3),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Colors.red),
+                    foregroundColor: Colors.red,
+                  ),
+                  child: const Text('Cancel'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => _saveMealPlan(request),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                  ),
+                  child: const Text('Save'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
 }

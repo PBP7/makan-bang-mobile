@@ -1,7 +1,7 @@
 // meal_card.dart
 import 'package:flutter/material.dart';
 import '../models/meal_plan_model.dart';
-import '../services/meal_plan_service.dart';
+import 'meal_plan_service.dart';
 
 class MealCard extends StatelessWidget {
   final MealPlan mealPlan;
@@ -10,12 +10,12 @@ class MealCard extends StatelessWidget {
   final VoidCallback onEdit;
 
   const MealCard({
-    Key? key,
+    super.key,
     required this.mealPlan,
     required this.onExpand,
     required this.onDelete,
     required this.onEdit,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

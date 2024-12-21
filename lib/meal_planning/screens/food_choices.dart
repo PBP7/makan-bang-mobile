@@ -6,6 +6,8 @@ import 'package:makan_bang/meal_planning/screens/create_mealplan.dart';
 import '../widgets/food_card.dart';
 
 class FoodChoicesScreen extends StatefulWidget {
+  const FoodChoicesScreen({super.key});
+
   @override
   _FoodChoicesScreenState createState() => _FoodChoicesScreenState();
 }
@@ -50,22 +52,38 @@ class _FoodChoicesScreenState extends State<FoodChoicesScreen> {
   }
 
   void submitChoices() {
-    Navigator.pop(context, selectedFoods);  // Mengirim data kembali ke halaman sebelumnya (CreateMealPlanScreen)
+    Navigator.pop(context, selectedFoods);
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final crossAxisCount = screenWidth > 600 ? 3 : 2; // 3 per baris untuk tablet, 2 untuk HP
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Choose Your Food'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
         actions: [
-          TextButton(
-            onPressed: selectedFoods.isNotEmpty
-                ? submitChoices
-                : null, // Cegah navigasi jika tidak ada makanan yang dipilih
-            child: const Text(
-              'Submit Choices',
-              style: TextStyle(color: Colors.white),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: TextButton(
+              onPressed: selectedFoods.isNotEmpty ? submitChoices : null,
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                backgroundColor: Colors.transparent,
+                side: const BorderSide(color: Colors.green),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                'Submit Choices',
+                style: TextStyle(
+                  color: Colors.green,
+                  fontSize: 14,
+                ),
+              ),
             ),
           ),
         ],
@@ -74,11 +92,11 @@ class _FoodChoicesScreenState extends State<FoodChoicesScreen> {
           ? const Center(child: CircularProgressIndicator())
           : GridView.builder(
               padding: const EdgeInsets.all(10),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
-                childAspectRatio: 0.7,
+                childAspectRatio: 0.8,
               ),
               itemCount: foodItems.length,
               itemBuilder: (context, index) {
@@ -88,6 +106,11 @@ class _FoodChoicesScreenState extends State<FoodChoicesScreen> {
                   child: FoodCard(
                     food: food,
                     isSelected: selectedFoods.contains(foodItems[index]),
+                    imageHeightFraction: 0.5, // Gambar 50% dari tinggi card
+                    textStyle: const TextStyle(
+                      fontSize: 12, // Ukuran teks disesuaikan
+                      overflow: TextOverflow.ellipsis, // Potong teks jika panjang
+                    ),
                   ),
                 );
               },
