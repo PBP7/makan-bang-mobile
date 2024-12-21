@@ -19,6 +19,17 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    
+    final Size screenSize = MediaQuery.of(context).size;
+    
+    final double widthMultiplier = screenSize.width / 400;
+    final double heightMultiplier = screenSize.height / 800;
+    
+    final double titleFontSize = 32 * widthMultiplier.clamp(0.8, 1.5);
+    final double welcomeFontSize = 28 * widthMultiplier.clamp(0.8, 1.5);
+    final double brandFontSize = 30 * widthMultiplier.clamp(0.8, 1.5);
+    final double subtitleFontSize = 16 * widthMultiplier.clamp(0.8, 1.2);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Register'),
@@ -31,149 +42,159 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(16.0 * widthMultiplier.clamp(0.8, 1.2)),
           child: Card(
             elevation: 4,
             color: const Color.fromARGB(255, 251, 250, 246),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16.0),
+              borderRadius: BorderRadius.circular(16.0 * widthMultiplier.clamp(0.8, 1.2)),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: EdgeInsets.all(24.0 * widthMultiplier.clamp(0.8, 1.2)),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Welcome text section
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         'Hello there,',
                         style: TextStyle(
-                          fontSize: 32,
+                          fontSize: titleFontSize,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Wrap( // Using Wrap instead of Row
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           Text(
                             'welcome to ',
                             style: TextStyle(
-                              fontSize: 28,
+                              fontSize: welcomeFontSize,
                             ),
                           ),
                           Text(
                             'MAKAN BANG',
                             style: TextStyle(
-                              fontSize: 30,
+                              fontSize: brandFontSize,
                               fontWeight: FontWeight.bold,
                               color: Colors.red,
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 12),
+                      SizedBox(height: 12 * heightMultiplier),
                       Text(
                         'create your account!',
                         style: TextStyle(
-                          fontSize: 16,
-                          color: Color(0xFFD4AF37), // Golden color
+                          fontSize: subtitleFontSize,
+                          color: const Color(0xFFD4AF37),
                         ),
                         textAlign: TextAlign.center,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 32),
-                  
+                  SizedBox(height: 32 * heightMultiplier),
+
                   // Username field
                   TextField(
                     controller: _usernameController,
                     decoration: InputDecoration(
                       hintText: 'Choose a username',
-                      hintStyle: TextStyle(color: Colors.grey[600]),
+                      hintStyle: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: subtitleFontSize,
+                      ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
+                        borderRadius: BorderRadius.circular(12.0 * widthMultiplier.clamp(0.8, 1.2)),
                         borderSide: BorderSide(color: Colors.grey[350]!),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
+                        borderRadius: BorderRadius.circular(12.0 * widthMultiplier.clamp(0.8, 1.2)),
                         borderSide: BorderSide(color: Colors.grey[350]!),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
+                        borderRadius: BorderRadius.circular(12.0 * widthMultiplier.clamp(0.8, 1.2)),
                         borderSide: BorderSide(color: Colors.grey[400]!),
                       ),
                       filled: true,
                       fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 16.0,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16.0 * widthMultiplier.clamp(0.8, 1.2),
+                        vertical: 16.0 * heightMultiplier.clamp(0.8, 1.2),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  
+                  SizedBox(height: 16 * heightMultiplier),
+
                   // Password field
                   TextField(
                     controller: _passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
                       hintText: 'Create a password',
-                      hintStyle: TextStyle(color: Colors.grey[600]),
+                      hintStyle: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: subtitleFontSize,
+                      ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
+                        borderRadius: BorderRadius.circular(12.0 * widthMultiplier.clamp(0.8, 1.2)),
                         borderSide: BorderSide(color: Colors.grey[350]!),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
+                        borderRadius: BorderRadius.circular(12.0 * widthMultiplier.clamp(0.8, 1.2)),
                         borderSide: BorderSide(color: Colors.grey[350]!),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
+                        borderRadius: BorderRadius.circular(12.0 * widthMultiplier.clamp(0.8, 1.2)),
                         borderSide: BorderSide(color: Colors.grey[400]!),
                       ),
                       filled: true,
                       fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 16.0,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16.0 * widthMultiplier.clamp(0.8, 1.2),
+                        vertical: 16.0 * heightMultiplier.clamp(0.8, 1.2),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  
+                  SizedBox(height: 16 * heightMultiplier),
+
                   // Confirm Password field
                   TextField(
                     controller: _confirmPasswordController,
                     obscureText: true,
                     decoration: InputDecoration(
                       hintText: 'Confirm your password',
-                      hintStyle: TextStyle(color: Colors.grey[600]),
+                      hintStyle: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: subtitleFontSize,
+                      ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
+                        borderRadius: BorderRadius.circular(12.0 * widthMultiplier.clamp(0.8, 1.2)),
                         borderSide: BorderSide(color: Colors.grey[350]!),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
+                        borderRadius: BorderRadius.circular(12.0 * widthMultiplier.clamp(0.8, 1.2)),
                         borderSide: BorderSide(color: Colors.grey[350]!),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
+                        borderRadius: BorderRadius.circular(12.0 * widthMultiplier.clamp(0.8, 1.2)),
                         borderSide: BorderSide(color: Colors.grey[400]!),
                       ),
                       filled: true,
                       fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 16.0,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16.0 * widthMultiplier.clamp(0.8, 1.2),
+                        vertical: 16.0 * heightMultiplier.clamp(0.8, 1.2),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 32),
-                  
+                  SizedBox(height: 32 * heightMultiplier),
+
                   // Register button
                   SizedBox(
                     width: double.infinity,
@@ -214,30 +235,32 @@ class _RegisterPageState extends State<RegisterPage> {
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
                         backgroundColor: const Color(0xFF96C7B4),
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        padding: EdgeInsets.symmetric(
+                          vertical: 16.0 * heightMultiplier.clamp(0.8, 1.2)
+                        ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0),
+                          borderRadius: BorderRadius.circular(12.0 * widthMultiplier.clamp(0.8, 1.2)),
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         'Register',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: subtitleFontSize,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  
+                  SizedBox(height: 24 * heightMultiplier),
+
                   // Login link
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Wrap(
+                    alignment: WrapAlignment.center,
                     children: [
-                      const Text(
+                      Text(
                         "Already have an account? ",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 14 * widthMultiplier.clamp(0.8, 1.2),
                           color: Colors.black87,
                         ),
                       ),
@@ -252,7 +275,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: Text(
                           'Login Now',
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 14 * widthMultiplier.clamp(0.8, 1.2),
                             fontWeight: FontWeight.bold,
                             color: Colors.blue[900],
                           ),

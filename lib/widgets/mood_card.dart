@@ -3,71 +3,114 @@ import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:makan_bang/screens/login.dart';
 import 'package:makan_bang/forum/screens/view_forum.dart';
+import 'package:makan_bang/catalog/screens/list_productentry.dart';
+import 'package:makan_bang/preference/screens/preference_page.dart';
 
 class ItemCard extends StatelessWidget {
-  // Menampilkan kartu dengan ikon dan nama.
-
-  final ItemHomepage item; 
-  
-  const ItemCard(this.item, {super.key}); 
+  final ItemHomepage item;
+  const ItemCard(this.item, {super.key});
 
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
-    return Material(
-      // Menentukan warna latar belakang dari tema aplikasi.
-      color: Colors.amber[50],
-      elevation: 3,
-      // Membuat sudut kartu melengkung.
-      borderRadius: BorderRadius.circular(12),
-      
-      child: InkWell(
-        // Aksi ketika kartu ditekan.
-        onTap: () async {
-          // Memunculkan SnackBar ketika diklik
-          // ScaffoldMessenger.of(context)
-          //   ..hideCurrentSnackBar()
-          //   ..showSnackBar(SnackBar(
-                // content: Text("Kamu telah menekan tombol ${item.name}!")));
 
-          // Navigate ke route yang sesuai (tergantung jenis tombol)
-         
-          if (item.name == "Logout") {
-            final response = await request.logout(
-                "http://127.0.0.1:8000/authmobile/logout/");
-            String message = response["message"];
-            if (context.mounted) {
-                if (response['status']) {
-                    String uname = response["username"];
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text("$message Sampai jumpa, $uname."),
-                    ));
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const LoginPage()),
-                    );
-                } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text(message),
-                        ),
-                    );
-                }
-            }
-          } else if (item.name == "Forum") {
-            Navigator.push(context,
-                MaterialPageRoute(
-                    builder: (context) => const ForumPage()
-                ),
+    Future<void> handleAuthNavigation({
+      required BuildContext context,
+      required String feature,
+      required Widget destination,
+    }) async {
+      try {
+        final response = await request.get("http://127.0.0.1:8000/auth/status/");
+        if (response['is_authenticated']) {
+          if (context.mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => destination),
             );
           }
+        } else {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Log in or register to access $feature!"),
+              ),
+            );
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginPage()),
+            );
+          }
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Error connecting to server."),
+            ),
+          );
+        }
+      }
+    }
+
+    return Material(
+      color: Colors.amber[50],
+      elevation: 3,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: () async {
+          switch (item.name) {
+            case "Forum":
+              await handleAuthNavigation(
+                context: context,
+                feature: "forum",
+                destination: const ForumPage(),
+              );
+              break;
+            
+            case "Rate and Review ":
+              await handleAuthNavigation(
+                context: context,
+                feature: "review page",
+                destination: const ForumPage(), // GANTI
+              );
+              break;
+            
+            case "Preference":
+              await handleAuthNavigation(
+                context: context,
+                feature: "preference page",
+                destination: const PreferencePage(),
+              );
+              break;
+            
+            case "Meal Plan":
+              await handleAuthNavigation(
+                context: context,
+                feature: "meal plan",
+                destination: const ForumPage(), // GANTI
+              );
+              break;
+            
+            case "Bookmark":
+              await handleAuthNavigation(
+                context: context,
+                feature: "bookmarks",
+                destination: const ForumPage(), // GANTI
+              );
+              break;
+            
+            case "Catalogue":
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProductEntryPage()),
+              );
+              break;
+          }
         },
-        // Container untuk menyimpan Icon dan Text
         child: Container(
           padding: const EdgeInsets.all(8),
           child: Center(
             child: Column(
-              // Menyusun ikon dan teks di tengah kartu.
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
@@ -88,13 +131,11 @@ class ItemCard extends StatelessWidget {
       ),
     );
   }
-  
 }
 
 class ItemHomepage {
-    final String name;
-    final IconData icon;
-    final Color color;
-
-    ItemHomepage(this.name, this.icon, this.color);
+  final String name;
+  final IconData icon;
+  final Color color;
+  ItemHomepage(this.name, this.icon, this.color);
 }

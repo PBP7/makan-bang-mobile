@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:makan_bang/widgets/left_drawer.dart';
 import 'package:makan_bang/widgets/mood_card.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
   final List<ItemHomepage> items = [
     ItemHomepage("Catalogue", Icons.menu_book, Colors.blue[900]!),
     ItemHomepage("Rate and Review ", Icons.rate_review_outlined, Colors.red),
@@ -12,7 +21,30 @@ class MyHomePage extends StatelessWidget {
     ItemHomepage("Bookmark", Icons.bookmark_add, Colors.blue[900]!),
   ];
 
-  MyHomePage({super.key});
+  bool isAuthenticated = false;
+  String? username;
+
+  @override
+  void initState() {
+    super.initState();
+    checkAuthStatus();
+  }
+
+  Future<void> checkAuthStatus() async {
+    final request = context.read<CookieRequest>();
+    try {
+      final response = await request.get("http://127.0.0.1:8000/auth/status/");
+      setState(() {
+        isAuthenticated = response['is_authenticated'];
+        username = response['username'];
+      });
+    } catch (e) {
+      setState(() {
+        isAuthenticated = false;
+        username = null;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,15 +65,12 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Previous code remains the same until ExpansionTile section
             Container(
               width: double.infinity,
               height: 250,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(
-                    'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/static/image/heropic.png',
-                  ),
+                  image: AssetImage('images/heropic.png'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -56,7 +85,9 @@ class MyHomePage extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Text(
-                      'Hello there, looking for something?',
+                      isAuthenticated && username != null
+                          ? 'Hello $username, looking for something?'
+                          : 'Hello there, looking for something?',
                       style: Theme.of(context).textTheme.titleMedium,
                       textAlign: TextAlign.center,
                     ),
@@ -79,7 +110,7 @@ class MyHomePage extends StatelessWidget {
                 }).toList(),
               ),
             ),
-
+            const SizedBox(height: 12),
             // Why MAKAN BANG? Section with modified ExpansionTiles
             const Padding(
               padding: EdgeInsets.all(16.0),
@@ -166,10 +197,10 @@ class _ImageCarouselState extends State<ImageCarousel> {
   );
   int _currentPage = 0;
 
-  final List<String> _imageUrls = [
-    'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/static/image/enjoyjkt.png',
-    'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/static/image/gofood.png',
-    'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/static/image/traveloka.png',
+  final List<String> _imageAssets = [
+    'assets/images/enjoyjkt.png',
+    'assets/images/gofood.png',
+    'assets/images/traveloka.png',
   ];
 
   @override
@@ -187,7 +218,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
   void _startAutoScroll() {
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        final nextPage = (_currentPage + 1) % _imageUrls.length;
+        final nextPage = (_currentPage + 1) % _imageAssets.length;
         _pageController.animateToPage(
           nextPage,
           duration: const Duration(milliseconds: 500),
@@ -210,12 +241,12 @@ class _ImageCarouselState extends State<ImageCarousel> {
               _currentPage = page;
             });
           },
-          itemCount: _imageUrls.length,
+          itemCount: _imageAssets.length,
           itemBuilder: (context, index) {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Image.network(
-                _imageUrls[index],
+              child: Image.asset(
+                _imageAssets[index],
                 fit: BoxFit.contain,
               ),
             );
@@ -225,7 +256,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
           padding: const EdgeInsets.only(bottom: 8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: _imageUrls.asMap().entries.map((entry) {
+            children: _imageAssets.asMap().entries.map((entry) {
               return Container(
                 width: 8.0,
                 height: 8.0,

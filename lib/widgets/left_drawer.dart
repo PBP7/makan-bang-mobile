@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:makan_bang/preference/screens/preference_page.dart';
 import 'package:makan_bang/screens/menu.dart';
 import 'package:makan_bang/screens/login.dart';
 import 'package:makan_bang/catalog/screens/product_entryform.dart';
@@ -7,8 +8,38 @@ import 'package:makan_bang/forum/screens/view_forum.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 
-class LeftDrawer extends StatelessWidget {
+class LeftDrawer extends StatefulWidget {
   const LeftDrawer({super.key});
+
+  @override
+  State<LeftDrawer> createState() => _LeftDrawerState();
+}
+
+class _LeftDrawerState extends State<LeftDrawer> {
+  bool isAuthenticated = false;
+  String? username;
+
+  @override
+  void initState() {
+    super.initState();
+    checkAuthStatus();
+  }
+
+  Future<void> checkAuthStatus() async {
+    final request = context.read<CookieRequest>();
+    try {
+      final response = await request.get("http://127.0.0.1:8000/auth/status/");
+      setState(() {
+        isAuthenticated = response['is_authenticated'];
+        username = response['username'];
+      });
+    } catch (e) {
+      setState(() {
+        isAuthenticated = false;
+        username = null;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,13 +60,29 @@ class LeftDrawer extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               color: const Color.fromARGB(255, 251, 250, 246),
-              child: const Text(
-                'MAKAN BANG',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'MAKAN BANG',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  if (isAuthenticated && username != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        'Hungry, $username?',
+                        style: const TextStyle(
+                          fontSize: 17,
+                          color: Color.fromARGB(255, 113, 113, 113),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
             Expanded(
@@ -53,17 +100,19 @@ class LeftDrawer extends StatelessWidget {
                     },
                   ),
                   const Divider(height: 1),
-                  ListTile(
-                    leading: const Icon(Icons.add_circle_outline_sharp, color: Colors.black),
-                    title: const Text('Add Product', style: TextStyle(color: Colors.black)),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ProductEntryFormPage()),
-                      );
-                    },
-                  ),
-                  const Divider(height: 1),
+                  if (isAuthenticated && (username?.toLowerCase() == 'admin')) ...[
+                    ListTile(
+                      leading: const Icon(Icons.add_circle_outline_sharp, color: Colors.black),
+                      title: const Text('Add Product', style: TextStyle(color: Colors.black)),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const ProductEntryFormPage()),
+                        );
+                      },
+                    ),
+                    const Divider(height: 1),
+                  ],
                   ListTile(
                     leading: Icon(Icons.menu_book, color: Colors.blue[900]),
                     title: const Text('Catalogue', style: TextStyle(color: Colors.black)),
@@ -78,55 +127,195 @@ class LeftDrawer extends StatelessWidget {
                   ListTile(
                     leading: const Icon(Icons.rate_review_outlined, color: Colors.red),
                     title: const Text('Rate and Review', style: TextStyle(color: Colors.black)),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ForumPage()),
-                      );
+                    onTap: () async {
+                      final request = context.read<CookieRequest>();
+                      try {
+                        final response = await request.get("http://127.0.0.1:8000/auth/status/");
+                        if (response['is_authenticated']) {
+                          if (context.mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const ForumPage()), // GANTI
+                            );
+                          }
+                        } else {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Log in or register to access review page!"),
+                              ),
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const LoginPage()),
+                            );
+                          }
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Error."),
+                            ),
+                          );
+                        }
+                      }
                     },
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: Icon(Icons.fastfood_outlined, color: Colors.green[400]),
                     title: const Text('Preference', style: TextStyle(color: Colors.black)),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ForumPage()),
-                      );
+                    onTap: () async {
+                      final request = context.read<CookieRequest>();
+                      try {
+                        final response = await request.get("http://127.0.0.1:8000/auth/status/");
+                        if (response['is_authenticated']) {
+                          if (context.mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const PreferencePage()),
+                            );
+                          }
+                        } else {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Log in or register to access preference page!"),
+                              ),
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const LoginPage()),
+                            );
+                          }
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Error."),
+                            ),
+                          );
+                        }
+                      }
                     },
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: Icon(Icons.list_alt, color: Colors.yellow[800]),
                     title: const Text('Meal Plan', style: TextStyle(color: Colors.black)),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ForumPage()),
-                      );
+                    onTap: () async {
+                      final request = context.read<CookieRequest>();
+                      try {
+                        final response = await request.get("http://127.0.0.1:8000/auth/status/");
+                        if (response['is_authenticated']) {
+                          if (context.mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const ForumPage()), // GANTI
+                            );
+                          }
+                        } else {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Log in or register to access meal plan!"),
+                              ),
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const LoginPage()),
+                            );
+                          }
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Error."),
+                            ),
+                          );
+                        }
+                      }
                     },
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: Icon(Icons.bookmark_add, color: Colors.blue[900]),
                     title: const Text('Bookmark', style: TextStyle(color: Colors.black)),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ForumPage()),
-                      );
+                    onTap: () async {
+                      final request = context.read<CookieRequest>();
+                      try {
+                        final response = await request.get("http://127.0.0.1:8000/auth/status/");
+                        if (response['is_authenticated']) {
+                          if (context.mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const ForumPage()), // GANTI
+                            );
+                          }
+                        } else {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Log in or register to access bookmarks!"),
+                              ),
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const LoginPage()),
+                            );
+                          }
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Error."),
+                            ),
+                          );
+                        }
+                      }
                     },
                   ),
                   const Divider(height: 1),
                   ListTile(
                     leading: Icon(Icons.format_quote_rounded, color: Colors.pink[300]),
                     title: const Text('Forum', style: TextStyle(color: Colors.black)),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ForumPage()),
-                      );
+                    onTap: () async {
+                      final request = context.read<CookieRequest>();
+                      try {
+                        final response = await request.get("http://127.0.0.1:8000/auth/status/");
+                        if (response['is_authenticated']) {
+                          if (context.mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const ForumPage()),
+                            );
+                          }
+                        } else {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Log in or register to access forum!"),
+                              ),
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const LoginPage()),
+                            );
+                          }
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Error."),
+                            ),
+                          );
+                        }
+                      }
                     },
                   ),
                   const Divider(height: 1),
@@ -134,7 +323,6 @@ class LeftDrawer extends StatelessWidget {
               ),
             ),
             
-            // Rest of the code remains the same
             Container(
               width: double.infinity,
               color: const Color.fromARGB(255, 251, 250, 246),
@@ -180,8 +368,8 @@ class LeftDrawer extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () {},
-                        child: Image.network(
-                          'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/static/image/iconx.png',
+                        child: Image.asset(
+                          'assets/images/iconx.png',
                           width: 24,
                           height: 24,
                         ),
@@ -189,8 +377,8 @@ class LeftDrawer extends StatelessWidget {
                       const SizedBox(width: 16),
                       InkWell(
                         onTap: () {},
-                        child: Image.network(
-                          'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/static/image/iconinstagram.png',
+                        child: Image.asset(
+                          'assets/images/iconinstagram.png',
                           width: 24,
                           height: 24,
                         ),
@@ -198,8 +386,8 @@ class LeftDrawer extends StatelessWidget {
                       const SizedBox(width: 16),
                       InkWell(
                         onTap: () {},
-                        child: Image.network(
-                          'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/static/image/iconpinterest.png',
+                        child: Image.asset(
+                          'assets/images/iconpinterest.png',
                           width: 24,
                           height: 24,
                         ),
@@ -218,36 +406,48 @@ class LeftDrawer extends StatelessWidget {
               ),
               child: ListTile(
                 leading: Icon(
-                  Icons.logout,
-                  color: Colors.red[900],
+                  isAuthenticated ? Icons.logout : Icons.login,
+                  color: isAuthenticated ? Colors.red[900] : Colors.blue[900],
                 ),
                 title: Text(
-                  'Logout',
-                  style: TextStyle(color: Colors.red[900]),
+                  isAuthenticated ? 'Logout' : 'Login',
+                  style: TextStyle(
+                    color: isAuthenticated ? Colors.red[900] : Colors.blue[900],
+                  ),
                 ),
                 onTap: () async {
-                  final response = await request.logout(
-                    "http://127.0.0.1:8000/authmobile/logout/");
-                  String message = response["message"];
-                  if (context.mounted) {
-                    if (response['status']) {
-                      String uname = response["username"];
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("$message Sampai jumpa, $uname."),
-                        ),
-                      );
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const LoginPage()),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(message),
-                        ),
-                      );
+                  if (isAuthenticated) {
+                    final response = await request.logout(
+                      "http://127.0.0.1:8000/authmobile/logout/");
+                    String message = response["message"];
+                    if (context.mounted) {
+                      if (response['status']) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("$message Sampai jumpa, $username."),
+                          ),
+                        );
+                        setState(() {
+                          isAuthenticated = false;
+                          username = null;
+                        });
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => MyHomePage()),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(message),
+                          ),
+                        );
+                      }
                     }
+                  } else {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginPage()),
+                    );
                   }
                 },
               ),
