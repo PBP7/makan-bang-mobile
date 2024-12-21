@@ -68,6 +68,13 @@ class _PreferencePageState extends State<PreferencePage> {
   Future<void> _fetchMatchingProducts() async {
     final request = context.read<CookieRequest>();
     try {
+      if (_selectedPreferences.isEmpty) {
+        setState(() {
+          _matchingProducts = [];
+        });
+        return;
+      }
+
       final response = await request.get(
         'http://127.0.0.1:8000/preferences/get-matching-products/',
       );
@@ -75,30 +82,23 @@ class _PreferencePageState extends State<PreferencePage> {
       if (response != null && response is List) {
         setState(() {
           _matchingProducts = response.map((item) {
-            try {
-              return Product(
-                model: "katalog.product",
-                pk: "0",
-                fields: Fields(
-                  item: item['name']?.toString() ?? '',
-                  pictureLink: item['picture_link']?.toString() ?? '',
-                  restaurant: item['restaurant']?.toString() ?? '',
-                  kategori: item['kategori']?.toString() ?? '',
-                  lokasi: item['lokasi']?.toString() ?? '',
-                  price: int.tryParse(
-                    (item['price']?.toString() ?? '0')
-                        .replaceAll(RegExp(r'[^0-9]'), '')
-                  ) ?? 0,
-                  nutrition: item['nutrition']?.toString() ?? '',
-                  description: item['description']?.toString() ?? '',
-                  linkGofood: item['link_gofood']?.toString() ?? '',
-                  isDatasetProduct: true,
-                ),
-              );
-            } catch (e) {
-              return null;
-            }
-          }).whereType<Product>().toList(); // Filter out null values
+            return Product(
+              model: "katalog.product",
+              pk: item['id']?.toString() ?? '0',
+              fields: Fields(
+                item: item['name'] ?? '',
+                pictureLink: item['picture_link'] ?? '',
+                restaurant: item['restaurant'] ?? '',
+                kategori: item['kategori'] ?? '',
+                lokasi: item['lokasi'] ?? '',
+                price: int.tryParse(item['price']?.toString() ?? '0') ?? 0,
+                nutrition: '',
+                description: item['description'] ?? '',
+                linkGofood: item['link_gofood'] ?? '',
+                isDatasetProduct: true,
+              ),
+            );
+          }).whereType<Product>().toList();
         });
       }
     } catch (e) {
@@ -216,11 +216,41 @@ class _PreferencePageState extends State<PreferencePage> {
     return Chip(
       label: Text(label),
       deleteIcon: const Icon(Icons.close, size: 18),
-      onDeleted: () => _deletePreference(label),
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      labelStyle: TextStyle(
-        color: Theme.of(context).colorScheme.onPrimaryContainer,
-      ),
+      onDeleted: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Delete Preference'),
+              content: Text('Are you sure you want to delete "$label"?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _deletePreference(label);
+                  },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
+                  child: const Text(
+                    'Delete',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      labelStyle: const TextStyle(color: Colors.black),
     );
   }
 
@@ -245,7 +275,10 @@ class _PreferencePageState extends State<PreferencePage> {
                 _preferenceController.clear();
                 Navigator.pop(context);
               },
-              child: const Text('Cancel'),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.black),
+              ),
             ),
             FilledButton(
               onPressed: () {
@@ -255,7 +288,13 @@ class _PreferencePageState extends State<PreferencePage> {
                   Navigator.pop(context);
                 }
               },
-              child: const Text('Add'),
+              style: FilledButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+              ),
+              child: const Text(
+                'Add',
+                style: TextStyle(color: Colors.black),
+              ),
             ),
           ],
         );
@@ -269,11 +308,12 @@ class _PreferencePageState extends State<PreferencePage> {
       appBar: AppBar(
         title: const Text('Preferences'),
         backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Colors.white,
+        foregroundColor: Colors.black,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddPreferenceDialog,
-        child: const Icon(Icons.add),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        child: const Icon(Icons.add, color: Colors.black),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -331,16 +371,21 @@ class _PreferencePageState extends State<PreferencePage> {
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: MediaQuery.of(context).size.width > 600 ? 3 : 2,
-                        childAspectRatio: 0.7,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
+                        childAspectRatio: 0.68,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
                       ),
                       itemCount: _matchingProducts.length,
                       itemBuilder: (context, index) {
                         final product = _matchingProducts[index];
                         return Card(
-                          clipBehavior: Clip.antiAlias,
+                          elevation: 8,
+                          margin: const EdgeInsets.all(4),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
                           child: InkWell(
+                            splashColor: Colors.blue.withAlpha(30),
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -352,70 +397,68 @@ class _PreferencePageState extends State<PreferencePage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                ClipRRect(
-                                  borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(16)
+                                Expanded(
+                                  flex: 6,
+                                  child: ClipRRect(
+                                    borderRadius: const BorderRadius.vertical(
+                                      top: Radius.circular(16),
+                                    ),
+                                    child: Image.network(
+                                      product.fields.pictureLink,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
-                                  child: product.fields.pictureLink.isNotEmpty
-                                      ? Image.network(
-                                          product.fields.pictureLink,
-                                          height: 180,
-                                          width: double.infinity,
-                                          fit: BoxFit.cover,
-                                        )
-                                      : Image.asset(
-                                          'assets/placeholder.jpg',
-                                          height: 180,
-                                          width: double.infinity,
-                                          fit: BoxFit.cover,
-                                        ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        product.fields.item,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        'Rp ${product.fields.price}',
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.green,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.restaurant,
-                                            size: 20,
-                                            color: Colors.grey,
+                                Expanded(
+                                  flex: 5,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          product.fields.item,
+                                          style: const TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                          const SizedBox(width: 8),
-                                          Expanded(
-                                            child: Text(
-                                              product.fields.restaurant,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.grey,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'Rp ${product.fields.price}',
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.green,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.restaurant,
+                                              size: 14,
+                                              color: Colors.grey,
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                            const SizedBox(width: 4),
+                                            Expanded(
+                                              child: Text(
+                                                product.fields.restaurant,
+                                                style: const TextStyle(
+                                                  fontSize: 11,
+                                                  color: Colors.grey,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],

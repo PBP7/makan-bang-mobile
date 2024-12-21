@@ -7,6 +7,7 @@ import 'package:makan_bang/catalog/screens/list_productentry.dart';
 import 'package:makan_bang/forum/screens/view_forum.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:makan_bang/preference/screens/preference_page.dart';
 
 class LeftDrawer extends StatefulWidget {
   const LeftDrawer({super.key});
