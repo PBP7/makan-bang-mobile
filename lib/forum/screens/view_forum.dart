@@ -91,7 +91,7 @@ class _ForumPageState extends State<ForumPage> {
             width: double.infinity,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: NetworkImage('https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/static/image/authpic.jpg'),
+                image: AssetImage('images/forum.jpg'),
                 fit: BoxFit.cover,
               ),
             ),
