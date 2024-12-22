@@ -101,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
 
                       // Cek kredensial
                       final response = await request
-                          .login("http://127.0.0.1:8000/authmobile/login/", {
+                          .login("http://127.0.0.1:8000/authmobile/login_mobile/", {
                         'username': username,
                         'password': password,
                       });

@@ -85,6 +85,17 @@ class LeftDrawer extends StatelessWidget {
       );
     },
   ),
+  
+  ListTile(
+    leading: const Icon(Icons.rate_review),
+    title: const Text('Your Reviews'),
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const PreferencePage()),
+      );
+    },
+  ),
         ],
       ),
     );
