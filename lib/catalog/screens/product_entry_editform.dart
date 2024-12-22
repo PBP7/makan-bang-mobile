@@ -301,7 +301,7 @@ class _ProductEntryEditPageState extends State<ProductEntryEditPage> {
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
+                      backgroundColor: WidgetStateProperty.all(
                         Theme.of(context).colorScheme.primary,
                       ),
                     ),
@@ -309,7 +309,7 @@ class _ProductEntryEditPageState extends State<ProductEntryEditPage> {
                       if (_formKey.currentState!.validate()) {
                         // Send updated data to Django and wait for a response
                         final response = await request.postJson(
-                          "http://127.0.0.1:8000/katalog/edit-flutter/${_id}",
+                          "http://127.0.0.1:8000/katalog/edit-flutter/$_id",
                           jsonEncode(<String, dynamic>{
                             'item': _item,
                             'picture_link': _pictureLink,
