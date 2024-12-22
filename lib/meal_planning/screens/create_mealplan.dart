@@ -34,7 +34,7 @@ class CreateMealPlanScreen extends StatefulWidget {
 
 class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
   final TextEditingController _titleController = TextEditingController();
-  final mealPlanService = service.MealPlanService(baseUrl: 'http://127.0.0.1:8000/meal-planning/json/');
+  final mealPlanService = service.MealPlanService(baseUrl: 'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/meal-planning/json/');
   
   String? selectedDate;
   TimeOfDay? selectedTime;
@@ -81,10 +81,10 @@ class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
 
     try {
       final endpoint = isEditing 
-          ? 'http://127.0.0.1:8000/meal-planning/${widget.mealPlan!.pk}/update/'
-          : 'http://127.0.0.1:8000/meal-planning/finish-json/';
+          ? 'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/meal-planning/${widget.mealPlan!.pk}/update/'
+          : 'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/meal-planning/finish-json/';
 
-      final response = await request.postJson(
+      final response = await request.post(
         endpoint,
         jsonEncode({
           'title': _titleController.text,

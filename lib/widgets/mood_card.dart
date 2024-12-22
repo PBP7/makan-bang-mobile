@@ -22,7 +22,7 @@ class ItemCard extends StatelessWidget {
       required Widget destination,
     }) async {
       try {
-        final response = await request.get("http://127.0.0.1:8000/auth/status/");
+        final response = await request.get("https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/auth/status/");
         if (response['is_authenticated']) {
           if (context.mounted) {
             Navigator.push(

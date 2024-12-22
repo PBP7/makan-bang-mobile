@@ -68,8 +68,8 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
   Future<void> _postReply(CookieRequest request) async {
     if (_formKey.currentState!.validate()) {
       try {
-        final response = await request.postJson(
-          'http://127.0.0.1:8000/forum/create-reply-flutter/${widget.question.id}/',
+        final response = await request.post(
+          'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/forum/create-reply-flutter/${widget.question.id}/',
           jsonEncode({
             'reply': _replyController.text,
           }),
@@ -415,7 +415,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
     if (confirmed == true && mounted) {
       try {
         final response = await request.post(
-          'http://127.0.0.1:8000/forum/delete-flutter/$questionId/',
+          'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/forum/delete-flutter/$questionId/',
           {},
         );
 
@@ -469,7 +469,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
     if (confirmed == true && mounted) {
       try {
         final response = await request.post(
-          'http://127.0.0.1:8000/forum/delete-reply-flutter/$replyId/',
+          'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/forum/delete-reply-flutter/$replyId/',
           {},
         );
 

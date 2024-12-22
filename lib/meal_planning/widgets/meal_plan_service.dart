@@ -28,7 +28,7 @@ class MealPlanService {
 
    Future<void> deleteMealPlan(int id) async {
     final response = await http.delete(
-      Uri.parse('http://127.0.0.1:8000/meal-planning/$id/delete/'),
+      Uri.parse('https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/meal-planning/$id/delete/'),
     );
 
     if (response.statusCode != 200) {
@@ -38,7 +38,7 @@ class MealPlanService {
 
   Future<void> updateMealPlan(int id, Map<String, dynamic> updates) async {
     final response = await http.put(
-      Uri.parse('http://127.0.0.1:8000/meal-planning/$id/update/'),
+      Uri.parse('https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/meal-planning/$id/update/'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(updates),
     );
@@ -53,34 +53,43 @@ class MealPlanService {
   // di meal_plan_service.dart
   Future<List<Product>> getFoodItems(List<String> foodItems) async {
     try {
-      // Debug log
-      // print("Sending request to get food items");
-      // print("Food items to fetch: $foodItems");
-      // print("URL: ${baseUrl}get-food-items/");
+      print("Sending food items (UUIDs): $foodItems"); // Debug log
 
-      // Pastikan ini benar-benar POST request
+      // Buat URL object
+      var url = Uri.parse('https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/meal-planning/get-food-items/');
+      
+      // Buat request body dengan UUID
+      var requestBody = jsonEncode({
+        'food_ids': foodItems,  // List of UUIDs
+      });
+
+      print("Sending POST request to: $url");
+      print("With body: $requestBody");
+
       final response = await http.post(
-        Uri.parse('${baseUrl}get-food-items/'),
+        url,
         headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
+        "Access-Control-Allow-Origin": "*",
+        'Content-Type': 'application/json',
+        'Accept': '*/*'
         },
-        body: jsonEncode({
-          'food_ids': foodItems,
-        }),
+        body: requestBody,
       );
 
-      // print("Response status: ${response.statusCode}");
-      // print("Response body: ${response.body}");
+      print("Request completed");
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
 
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
         return data.map((json) => Product.fromJson(json)).toList();
       } else {
-        throw Exception('Failed to load food items: ${response.body}');
+        print("Error response received");
+        throw Exception('Failed to load food items. Status: ${response.statusCode}, Body: ${response.body}');
       }
-    } catch (e) {
-      // print('Error in getFoodItems: $e');
+    } catch (e, stackTrace) {
+      print('Error in getFoodItems: $e');
+      print('Stack trace: $stackTrace');
       rethrow;
     }
   }

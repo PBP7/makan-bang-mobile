@@ -52,7 +52,7 @@
 
 //   // Fetch Reviews dari server
 //   Future<void> fetchReview() async {
-//     final url = Uri.parse('http://127.0.0.1:8000/rate_review/show-flutter/');
+//     final url = Uri.parse('https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/rate_review/show-flutter/');
 //     final response = await http.get(
 //       url,
 //       headers: {"Content-Type": "application/json"},
@@ -72,7 +72,7 @@
 
 //   // Fetch Product dari server
 //   Future<void> fetchProduct() async {
-//     final url = Uri.parse('http://127.0.0.1:8000/katalog/json/');
+//     final url = Uri.parse('https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/katalog/json/');
 //     final response = await http.get(
 //       url,
 //       headers: {"Content-Type": "application/json"},

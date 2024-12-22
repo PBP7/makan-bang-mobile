@@ -41,7 +41,7 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
   }
 
   Future<List<Product>> fetchProducts(CookieRequest request) async {
-    final response = await request.get('http://127.0.0.1:8000/katalog/json/');
+    final response = await request.get('https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/katalog/json/');
     List<Product> productList = [];
     for (var d in response) {
       if (d != null) {
@@ -347,7 +347,7 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                                           // Bookmark logic remains the same
                                           final userId = user.id;
                                           try {
-                                            final endpoint = 'http://127.0.0.1:8000/bookmark/toggle-bookmark-flutter/${product.pk}/';
+                                            final endpoint = 'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/bookmark/toggle-bookmark-flutter/${product.pk}/';
                                             final response = await request.post(
                                               endpoint,
                                               jsonEncode({"product_id": product.pk}),

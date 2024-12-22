@@ -309,8 +309,8 @@ class _ProductEntryEditPageState extends State<ProductEntryEditPage> {
                   child: ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        final response = await request.postJson(
-                          "http://127.0.0.1:8000/katalog/edit-flutter/$_id",
+                        final response = await request.post(
+                          "https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/katalog/edit-flutter/$_id",
                           jsonEncode(<String, dynamic>{
                             'item': _item,
                             'picture_link': _pictureLink,

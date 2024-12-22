@@ -33,7 +33,7 @@ double getScaleFactor(double width) {
 
 class _ReviewEntryPageState extends State<ReviewEntryPage> {
   Future<List<RateReviewEntry>> fetchReview(CookieRequest request, String productId) async {
-    final response = await request.get('http://127.0.0.1:8000/rate_review/product_detail/$productId/json/'); // INI 
+    final response = await request.get('https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/rate_review/product_detail/$productId/json/'); // INI 
     List<RateReviewEntry> reviewList = [];
     for (var d in response) {
       if (d != null) {

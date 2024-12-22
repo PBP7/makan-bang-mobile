@@ -279,8 +279,8 @@ class _ProductEntryFormPageState extends State<ProductEntryFormPage> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         // Send data to Django and wait for a response
-                        final response = await request.postJson(
-                          "http://127.0.0.1:8000/katalog/create-flutter/",
+                        final response = await request.post(
+                          "https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/katalog/create-flutter/",
                           jsonEncode(<String, String>{
                             'item': _item,
                             'picture_link': _pictureLink,

@@ -31,7 +31,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
   Future<void> checkAuthStatus() async {
     final request = context.read<CookieRequest>();
     try {
-      final response = await request.get("http://127.0.0.1:8000/auth/status/");
+      final response = await request.get("https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/auth/status/");
       setState(() {
         isAuthenticated = response['is_authenticated'];
         username = response['username'];
@@ -128,51 +128,12 @@ class _LeftDrawerState extends State<LeftDrawer> {
                   ),
                   const Divider(height: 1),
                   ListTile(
-                    leading: const Icon(Icons.rate_review_outlined, color: Colors.red),
-                    title: const Text('Rate and Review', style: TextStyle(color: Colors.black)),
-                    onTap: () async {
-                      final request = context.read<CookieRequest>();
-                      try {
-                        final response = await request.get("http://127.0.0.1:8000/auth/status/");
-                        if (response['is_authenticated']) {
-                          if (context.mounted) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const ReviewEntryPage(productId: '',)), // GANTI
-                            );
-                          }
-                        } else {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Log in or register to access review page!"),
-                              ),
-                            );
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const LoginPage()),
-                            );
-                          }
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Error."),
-                            ),
-                          );
-                        }
-                      }
-                    },
-                  ),
-                  const Divider(height: 1),
-                  ListTile(
                     leading: Icon(Icons.fastfood_outlined, color: Colors.green[400]),
                     title: const Text('Preference', style: TextStyle(color: Colors.black)),
                     onTap: () async {
                       final request = context.read<CookieRequest>();
                       try {
-                        final response = await request.get("http://127.0.0.1:8000/auth/status/");
+                        final response = await request.get("https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/auth/status/");
                         if (response['is_authenticated']) {
                           if (context.mounted) {
                             Navigator.push(
@@ -208,11 +169,39 @@ class _LeftDrawerState extends State<LeftDrawer> {
                   ListTile(
                     leading: Icon(Icons.list_alt, color: Colors.yellow[800]),
                     title: const Text('Meal Plan', style: TextStyle(color: Colors.black)),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const MealPlanScreen()),
-                      );
+                    onTap: () async {
+                      final request = context.read<CookieRequest>();
+                      try {
+                        final response = await request.get("https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/auth/status/");
+                        if (response['is_authenticated']) {
+                          if (context.mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const MealPlanScreen()),
+                            );
+                          }
+                        } else {
+                          if (context.mounted) {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => const LoginPage()),
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Please login first to access Meal Plan!"),
+                              ),
+                            );
+                          }
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Error checking authentication status"),
+                            ),
+                          );
+                        }
+                      }
                     },
                   ),
                   const Divider(height: 1),
@@ -222,7 +211,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
                     onTap: () async {
                       final request = context.read<CookieRequest>();
                       try {
-                        final response = await request.get("http://127.0.0.1:8000/auth/status/");
+                        final response = await request.get("https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/auth/status/");
                         if (response['is_authenticated']) {
                           if (context.mounted) {
                             Navigator.push(
@@ -261,7 +250,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
                     onTap: () async {
                       final request = context.read<CookieRequest>();
                       try {
-                        final response = await request.get("http://127.0.0.1:8000/auth/status/");
+                        final response = await request.get("https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/auth/status/");
                         if (response['is_authenticated']) {
                           if (context.mounted) {
                             Navigator.push(
@@ -393,7 +382,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
                 onTap: () async {
                   if (isAuthenticated) {
                     final response = await request.logout(
-                      "http://127.0.0.1:8000/authmobile/logout/");
+                      "https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/authmobile/logout/");
                     String message = response["message"];
                     if (context.mounted) {
                       if (response['status']) {

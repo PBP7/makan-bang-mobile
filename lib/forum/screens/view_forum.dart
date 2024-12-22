@@ -40,7 +40,7 @@ class _ForumPageState extends State<ForumPage> {
     setState(() => _isLoading = true);
     try {
       final response = await request.get(
-        'http://127.0.0.1:8000/forum/json/questions/?topic=$_selectedTopic'
+        'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/forum/json/questions/?topic=$_selectedTopic'
       );
 
       if (response != null) {

@@ -169,10 +169,10 @@ class _ForumFormPageState extends State<ForumFormPage> {
                   ),
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      final response = await request.postJson(
+                      final response = await request.post(
                         widget.forum == null
-                          ? "http://127.0.0.1:8000/forum/create-flutter/"
-                          : "http://127.0.0.1:8000/forum/edit-flutter/${widget.forum!.id}/",
+                          ? "https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/forum/create-flutter/"
+                          : "https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/forum/edit-flutter/${widget.forum!.id}/",
                         jsonEncode({
                           'title': _titleController.text,
                           'question': _questionController.text,

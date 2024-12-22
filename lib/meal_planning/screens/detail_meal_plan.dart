@@ -22,7 +22,7 @@ class MealPlanDetailScreen extends StatefulWidget {
 }
 
 class _MealPlanDetailScreenState extends State<MealPlanDetailScreen> {
-  final mealPlanService = MealPlanService(baseUrl: 'http://127.0.0.1:8000/meal-planning/');
+  final mealPlanService = MealPlanService(baseUrl: 'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/meal-planning/');
   List<Product> foodItems = [];
   bool isLoading = true;
 
@@ -34,7 +34,7 @@ class _MealPlanDetailScreenState extends State<MealPlanDetailScreen> {
 
   Future<void> _loadFoodItems() async {
     try {
-      final service = MealPlanService(baseUrl: 'http://127.0.0.1:8000/meal-planning/');
+      final service = MealPlanService(baseUrl: 'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/meal-planning/');
       final items = await service.getFoodItems(widget.mealPlan.fields.foodItems);
       
       if (mounted) {
@@ -88,7 +88,7 @@ class _MealPlanDetailScreenState extends State<MealPlanDetailScreen> {
 
     if (confirm == true) {
       try {
-        await MealPlanService(baseUrl: 'http://127.0.0.1:8000/meal-planning/')
+        await MealPlanService(baseUrl: 'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/meal-planning/')
             .deleteMealPlan(widget.mealPlan.pk);
         if (mounted) {
           widget.refreshMealPlans();

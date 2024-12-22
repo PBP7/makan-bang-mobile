@@ -14,7 +14,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<ItemHomepage> items = [
     ItemHomepage("Catalogue", Icons.menu_book, Colors.blue[900]!),
-    ItemHomepage("Rate and Review ", Icons.rate_review_outlined, Colors.red),
     ItemHomepage("Forum", Icons.emoji_people_sharp, Colors.pink[300]!),
     ItemHomepage("Preference", Icons.fastfood_outlined, Colors.green[400]!),
     ItemHomepage("Meal Plan", Icons.list_alt, Colors.yellow[800]!),
@@ -33,7 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> checkAuthStatus() async {
     final request = context.read<CookieRequest>();
     try {
-      final response = await request.get("http://127.0.0.1:8000/auth/status/");
+      final response = await request.get("https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/auth/status/");
       setState(() {
         isAuthenticated = response['is_authenticated'];
         username = response['username'];
@@ -59,6 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         iconTheme: const IconThemeData(color: Colors.black),
+        centerTitle: true,
       ),
       drawer: const LeftDrawer(),
       body: SingleChildScrollView(
@@ -98,16 +98,34 @@ class _MyHomePageState extends State<MyHomePage> {
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: GridView.count(
-                primary: false,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 3,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                children: items.map((ItemHomepage item) {
-                  return ItemCard(item);
-                }).toList(),
+              child: Column(
+                children: [
+                  // First row with 3 items
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(child: ItemCard(items[0])), // Catalogue
+                      Expanded(child: ItemCard(items[1])), // Forum
+                      Expanded(child: ItemCard(items[2])), // Preference
+                    ],
+                  ),
+                  const SizedBox(height: 10), // Space between rows
+                  // Second row with 2 centered items
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.28,
+                        child: ItemCard(items[3]), // Meal Plan
+                      ),
+                      const SizedBox(width: 0),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.28,
+                        child: ItemCard(items[4]), // Bookmark
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 12),

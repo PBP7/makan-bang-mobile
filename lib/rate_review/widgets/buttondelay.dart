@@ -135,7 +135,7 @@ class ReviewAction extends StatelessWidget {
               if (confirm) {
                 try {
                   final response = await request.post(
-                    'http://127.0.0.1:8000/rate_review/delete-flutter/${rateReviewEntry.pk}',
+                    'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/rate_review/delete-flutter/${rateReviewEntry.pk}',
                     {},
                   );
 

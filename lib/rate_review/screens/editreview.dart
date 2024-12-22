@@ -133,8 +133,8 @@ class _ReviewEditState extends State<ReviewEdit> {
                       if (_formKey.currentState!.validate()) {
                         print(_id);
                         // Send data to Django and wait for a response
-                        final response = await request.postJson(
-                          "http://127.0.0.1:8000/rate_review/edit-flutter/${_id}", // Perbaiki URL
+                        final response = await request.post(
+                          "https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/rate_review/edit-flutter/${_id}", // Perbaiki URL
                           jsonEncode(<String, dynamic>{
                             "user": user.name, 
                             "product": widget.productData['product'],

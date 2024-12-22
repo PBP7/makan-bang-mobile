@@ -3,7 +3,7 @@ import 'package:makan_bang/catalog/models/product_entry.dart';
 import 'package:makan_bang/widgets/left_drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:makan_bang/catalog/screens/productdetail.dart';
+import 'package:makan_bang/preference/widgets/preference_card.dart';
 
 class PreferencePage extends StatefulWidget {
   const PreferencePage({super.key});
@@ -37,7 +37,7 @@ class _PreferencePageState extends State<PreferencePage> {
     final request = context.read<CookieRequest>();
     try {
       final response = await request.get(
-        'http://127.0.0.1:8000/preferences/get-user-preferences-json/',
+        'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/preferences/get-user-preferences-json/',
       );
 
       if (response != null && 
@@ -76,7 +76,7 @@ class _PreferencePageState extends State<PreferencePage> {
       }
 
       final response = await request.get(
-        'http://127.0.0.1:8000/preferences/get-matching-products/',
+        'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/preferences/get-matching-products/',
       );
 
       if (response != null && response is List) {
@@ -115,7 +115,7 @@ class _PreferencePageState extends State<PreferencePage> {
     final request = context.read<CookieRequest>();
     try {
       final response = await request.post(
-        'http://127.0.0.1:8000/preferences/create-ajax/',
+        'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/preferences/create-ajax/',
         {'preference_name': preference},
       );
       
@@ -158,7 +158,7 @@ class _PreferencePageState extends State<PreferencePage> {
     try {
       // Get the HTML first to find the preference ID
       final getResponse = await request.get(
-        'http://127.0.0.1:8000/preferences/get-user-preferences-json/',
+        'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/preferences/get-user-preferences-json/',
       );
       
       
@@ -179,7 +179,7 @@ class _PreferencePageState extends State<PreferencePage> {
         
         // Gunakan URL yang sesuai dengan Django URL pattern dan POST method
         final response = await request.post(
-          'http://127.0.0.1:8000/preferences/delete-ajax/$preferenceId/',
+          'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/preferences/delete-ajax/$preferenceId/',
           {},
         );
 
@@ -385,93 +385,9 @@ class _PreferencePageState extends State<PreferencePage> {
                       ),
                       itemCount: _matchingProducts.length,
                       itemBuilder: (context, index) {
-                        final product = _matchingProducts[index];
-                        return Card(
-                          elevation: 8,
-                          margin: const EdgeInsets.all(4),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: InkWell(
-                            splashColor: Colors.blue.withAlpha(30),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProductDetailPage(product: product),
-                                ),
-                              );
-                            },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  flex: 6,
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.vertical(
-                                      top: Radius.circular(16),
-                                    ),
-                                    child: Image.network(
-                                      product.fields.pictureLink,
-                                      width: double.infinity,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 5,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          product.fields.item,
-                                          style: const TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          'Rp ${product.fields.price}',
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.green,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.restaurant,
-                                              size: 14,
-                                              color: Colors.grey,
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Expanded(
-                                              child: Text(
-                                                product.fields.restaurant,
-                                                style: const TextStyle(
-                                                  fontSize: 11,
-                                                  color: Colors.grey,
-                                                ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                        return PreferenceProductCard(
+                          product: _matchingProducts[index],
+                          scaleFactor: MediaQuery.of(context).size.width > 600 ? 1.2 : 1.0,
                         );
                       },
                     ),

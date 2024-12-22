@@ -16,7 +16,7 @@ class MealPlanScreen extends StatefulWidget {
 
 class _MealPlanScreenState extends State<MealPlanScreen> {
   late Future<List<MealPlan>> mealPlans;
-  final mealPlanService = service.MealPlanService(baseUrl: 'http://127.0.0.1:8000/meal-planning/json/');  // Updated API endpoint
+  final mealPlanService = service.MealPlanService(baseUrl: 'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/meal-planning/json/');  // Updated API endpoint
   String selectedFilter = 'all';
 
   @override

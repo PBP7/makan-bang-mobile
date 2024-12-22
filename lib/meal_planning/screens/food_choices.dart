@@ -23,7 +23,7 @@ class _FoodChoicesScreenState extends State<FoodChoicesScreen> {
   }
 
   Future<void> fetchFoodItems() async {
-    final url = Uri.parse('http://127.0.0.1:8000/katalog/json/');
+    final url = Uri.parse('https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/katalog/json/');
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {

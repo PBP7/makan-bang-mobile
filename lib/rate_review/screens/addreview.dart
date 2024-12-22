@@ -124,8 +124,8 @@ Widget build(BuildContext context) {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         // Send data to Django and wait for a response
-                        final response = await request.postJson(
-                          "http://127.0.0.1:8000/rate_review/create-flutter/",
+                        final response = await request.post(
+                          "https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/rate_review/create-flutter/",
                           jsonEncode(<String, String>{
                             "user": user.name,
                             "product": widget.productId,

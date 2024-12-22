@@ -126,7 +126,7 @@ class ProductCardActions extends StatelessWidget {
               if (confirm) {
                 try {
                   final response = await request.post(
-                    'http://127.0.0.1:8000/katalog/delete-flutter/${product.pk}',
+                    'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/katalog/delete-flutter/${product.pk}',
                     {},
                   );
 

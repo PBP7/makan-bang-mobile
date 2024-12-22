@@ -27,7 +27,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
 
   Future<List<Product>> fetchBookmarkedProducts(CookieRequest request) async {
     final response = await request.get(
-        'http://127.0.0.1:8000/bookmark/bookmarked-list/'); // Endpoint yang mengembalikan produk di-bookmark
+        'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/bookmark/bookmarked-list/'); // Endpoint yang mengembalikan produk di-bookmark
     List<Product> productList = [];
     for (var d in response['products']) {
       productList.add(Product.fromJson(d));
@@ -273,7 +273,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
                                   padding: EdgeInsets.zero,
                                   onPressed: () async {
                                     try {
-                                      final endpoint = 'http://127.0.0.1:8000/bookmark/toggle-bookmark-flutter/${product.pk}/';
+                                      final endpoint = 'https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/bookmark/toggle-bookmark-flutter/${product.pk}/';
                                       final response = await request.post(
                                         endpoint,
                                         jsonEncode({"product_id": product.pk}),
