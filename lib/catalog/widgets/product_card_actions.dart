@@ -66,7 +66,7 @@ class ProductCardActions extends StatelessWidget {
             },
             style: OutlinedButton.styleFrom(
               backgroundColor: Colors.white, // Fill color
-              side: BorderSide(color: Colors.orange, width: 2), // Yellow border
+              side: const BorderSide(color: Colors.orange, width: 2), // Yellow border
               padding: EdgeInsets.symmetric(
                 horizontal: horizontalPadding,
                 vertical: verticalPadding,
@@ -172,7 +172,7 @@ class ProductCardActions extends StatelessWidget {
             },
             style: OutlinedButton.styleFrom(
               backgroundColor: Colors.white, // Fill color
-              side: BorderSide(color: Colors.red, width: 2), // Red border
+              side: const BorderSide(color: Colors.red, width: 2), // Red border
               padding: EdgeInsets.symmetric(
                 horizontal: horizontalPadding,
                 vertical: verticalPadding,

@@ -3,7 +3,6 @@ import 'package:makan_bang/models/user.dart.dart';
 import 'package:makan_bang/screens/menu.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:makan_bang/screens/login.dart';
 
 void main() {
   runApp(const MyApp());
