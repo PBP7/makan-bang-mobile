@@ -31,6 +31,9 @@ double getScaleFactor(double width) {
 }
 
 class _ProductEntryPageState extends State<ProductEntryPage> {
+  bool isAuthenticated = false;
+  String? username;
+
   late Future<List<Product>> _productFuture;
 
   @override
@@ -38,6 +41,7 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
     super.initState();
     final request = Provider.of<CookieRequest>(context, listen: false);
     _productFuture = fetchProducts(request); // Initialize Future here
+    checkAuthStatus();
   }
 
   Future<List<Product>> fetchProducts(CookieRequest request) async {
@@ -51,6 +55,21 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
     return productList;
   }
 
+  Future<void> checkAuthStatus() async {
+    final request = context.read<CookieRequest>();
+    try {
+      final response = await request.get("https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/auth/status/");
+      setState(() {
+        isAuthenticated = response['is_authenticated'];
+        username = response['username'];
+      });
+    } catch (e) {
+      setState(() {
+        isAuthenticated = false;
+        username = null;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,9 +106,8 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
         centerTitle: true,
       ),
         drawer: const LeftDrawer(),
-        floatingActionButton: user.name ==
-                'admin' // Cek apakah user adalah admin
-            ? const ShopFloatingActionButton() // Tampilkan FAB hanya untuk admin
+        floatingActionButton: isAuthenticated && (username?.toLowerCase() == 'admin')
+            ? const ShopFloatingActionButton() 
             : null,
         body: FutureBuilder(
             future: _productFuture,
@@ -294,7 +312,7 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                                       Padding(
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 10 * scaleFactor),
-                                        child: user.name == 'admin'
+                                        child: isAuthenticated && (username?.toLowerCase() == 'admin')
                                             ? ProductCardActions(
                                                 product: product,
                                                 onUpdateSuccess: () {

@@ -13,14 +13,6 @@ class ProductDetailPage extends StatelessWidget {
   final Product product;
 
   const ProductDetailPage({super.key, required this.product}); // Gunakan parameter yang 
-  // Fungsi untuk membuka link
-  Future<void> _launchGoFoodLink(String url) async {
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication); // Buka di aplikasi eksternal
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,28 +132,6 @@ class ProductDetailPage extends StatelessWidget {
               ),
 
               const SizedBox(height: 10),
-              // Link GoFood
-              Row(
-                children: [
-                  Icon(Icons.link, size: 20, color: Colors.blue[900]),
-                  const SizedBox(width: 5),
-                  GestureDetector(
-                    onTap: () {
-                      // Tindakan ketika link GoFood diklik
-                      _launchGoFoodLink(product.fields.linkGofood);
-                    },
-                    child: Text(
-                      'View in GoFood',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.blue[900],
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
               // Harga
               Text(
                 "Price: Rp${product.fields.price}",

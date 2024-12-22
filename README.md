@@ -1,5 +1,12 @@
 # Makan Bang Mobile
 
+[![Build status](https://build.appcenter.ms/v0.1/apps/5b7920e7-12e2-433a-aebb-3c653d940a75/branches/main/badge)](https://build.appcenter.ms/v0.1/apps/5b7920e7-12e2-433a-aebb-3c653d940a75/branches/main/badge)
+
+## Link Aplikasi : https://install.appcenter.ms/orgs/pbp7/apps/makanbang/distribution_groups/public
+
+## Link Video Promosi : https://youtu.be/2d62bt4gw7g?si=xEAlznXgHg02QKA0
+
+
 ## Nama-nama anggota kelompok:
 - Fariz Muhammad Rayhansyah Ramadhan - 2306203854
 - Irma Nia Alwijah - 2306226864
@@ -13,7 +20,7 @@ Travelling ke wilayah baru, rasanya kurang lengkap jika tidak berbicara tentang 
 
 Terinspirasi dari problematika tersebut, “Makan Bang” tertarik untuk mengembangkan platform digital untuk membantu traveler dan sobat makan-makan mencari sajian terbaik, memastikan anda mampu memilih menu hari ini! Dengan mengelola informasi di seputar Jakarta Selatan, “Makan Bang” juga menyiapkan tautan menuju platform Gofood by Gojek, agar menu yang diinginkan siap antar. 
 
-“Makan Bang” dilengkapi dengan informasi mengenai gizi dalam menu-menu yang disajikan, membuat sobat “Makan Bang” bisa mengira-ngira, nutrisi yang akan disantap hari ini. Dalam penggunaannya pun, sobat tidak perlu khawatir, “Makan Bang” sudah menambahkan fitur preference serta catalog list yang membantu menyortir makanan favorit, serta mengubahnya kembali di lain waktu. “Makan Bang” juga memiliki meal-planning untuk rencana mukbang sobat makan-makan selanjutnya, lho! 
+���Makan Bang” dilengkapi dengan informasi mengenai gizi dalam menu-menu yang disajikan, membuat sobat “Makan Bang” bisa mengira-ngira, nutrisi yang akan disantap hari ini. Dalam penggunaannya pun, sobat tidak perlu khawatir, “Makan Bang” sudah menambahkan fitur preference serta catalog list yang membantu menyortir makanan favorit, serta mengubahnya kembali di lain waktu. “Makan Bang” juga memiliki meal-planning untuk rencana mukbang sobat makan-makan selanjutnya, lho! 
 
 Eits, jangan takut menu yang tadinya menggiurkan banget, nggak bisa ditemukan lagi, karena “Makan Bang” punya bookmark yang membantu menyimpan list menu simpananmu. Jika setelah icip-icip, terdapat kekurangan, sobat juga bisa mencurahkan rate and review-nya, ya! SIlakan bertanya juga di kolom Forum, yang akan membantu sesama sobat “Makan Bang” untuk berbagi keseruan kulinerannya. Seru kan?
 

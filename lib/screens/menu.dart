@@ -68,9 +68,9 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
               width: double.infinity,
               height: 250,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('images/heropic.png'),
+                  image: NetworkImage('https://fariz-muhammad31-makanbang.pbp.cs.ui.ac.id/static/image/heropic.png'),
                   fit: BoxFit.cover,
                 ),
               ),
