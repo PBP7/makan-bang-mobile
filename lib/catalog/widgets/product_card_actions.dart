@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:makan_bang/catalog/models/product_entry.dart';
+import 'package:makan_bang/catalog/screens/list_productentry.dart';
 import 'package:makan_bang/catalog/screens/product_entry_editform.dart'; // Pastikan path benar
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -104,30 +105,18 @@ class ProductCardActions extends StatelessWidget {
               bool confirm = await showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: Text(
-                    'Confirm Delete',
-                    style: TextStyle(fontSize: 16 * scaleFactor),
-                  ),
-                  content: Text(
-                    'Are you sure you want to delete ${product.fields.item}?',
-                    style: TextStyle(fontSize: 14 * scaleFactor),
-                  ),
+                  title: const Text('Confirm Delete'),
+                  content: Text('Are you sure you want to delete ${product.fields.item}?'),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context, false),
-                      child: Text(
-                        'Cancel',
-                        style: TextStyle(fontSize: 14 * scaleFactor),
-                      ),
+                      child: const Text('Cancel'),
                     ),
                     TextButton(
                       onPressed: () => Navigator.pop(context, true),
-                      child: Text(
+                      child: const Text(
                         'Delete',
-                        style: TextStyle(
-                          fontSize: 14 * scaleFactor,
-                          color: Colors.red,
-                        ),
+                        style: TextStyle(color: Colors.red),
                       ),
                     ),
                   ],
@@ -144,11 +133,16 @@ class ProductCardActions extends StatelessWidget {
                   if (context.mounted) {
                     if (response['status'] == 'success') {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Product deleted successfully!"),
+                        const SnackBar(content: Text("Product deleted successfully!")),
+                      );
+
+                      // Gunakan pushReplacement untuk menggantikan halaman saat ini
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ProductEntryPage(), // Ganti dengan halaman yang sama
                         ),
                       );
-                      onUpdateSuccess();
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(

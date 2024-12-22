@@ -219,6 +219,7 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                                                 color: Colors.black,
                                               ),
                                               overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
                                             ),
                                             // Kategori Produk
                                             Container(
@@ -238,6 +239,8 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.w600,
                                                 ),
+                                                overflow: TextOverflow.ellipsis, // Potong teks jika terlalu panjang
+                                                maxLines: 1, // Batasi menjadi 1 baris
                                               ),
                                             ),
                                             SizedBox(height: 8 * scaleFactor),
@@ -248,6 +251,8 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                                                 fontSize: priceFontSize,
                                                 color: Colors.green,
                                               ),
+                                              overflow: TextOverflow.ellipsis, // Potong teks jika terlalu panjang
+                                              maxLines: 1, // Batasi menjadi 1 baris
                                             ),
                                             SizedBox(height: 8 * scaleFactor),
                                             // Nama Restoran
