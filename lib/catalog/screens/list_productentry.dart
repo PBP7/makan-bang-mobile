@@ -75,9 +75,17 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
     double maxFontSize = 18; // Batas maksimal ukuran font
 
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Product Entry List'),
+      appBar: AppBar(
+        title: const Text(
+          'MAKAN BANG',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
         ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        centerTitle: true,
+      ),
         drawer: const LeftDrawer(),
         floatingActionButton: user.name ==
                 'admin' // Cek apakah user adalah admin
@@ -92,7 +100,7 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                 if (!snapshot.hasData || snapshot.data.isEmpty) {
                   return const Center(
                     child: Text(
-                      'Belum ada data produk pada Toko Musik John Lennon.',
+                      'No food available in MAKAN BANG :(',
                       style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
                     ),
                   );
@@ -221,6 +229,7 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                                               overflow: TextOverflow.ellipsis,
                                               maxLines: 1,
                                             ),
+                                            SizedBox(height: 4 * scaleFactor),
                                             // Kategori Produk
                                             Container(
                                               padding: EdgeInsets.symmetric(
@@ -228,31 +237,30 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                                                 vertical: categoryPadding,
                                               ),
                                               decoration: BoxDecoration(
-                                                color: Colors.grey.shade700,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
+                                                color: Colors.blue[50], // Changed to light blue
+                                                borderRadius: BorderRadius.circular(4),
                                               ),
                                               child: Text(
                                                 product.fields.kategori,
                                                 style: TextStyle(
                                                   fontSize: categoryFontSize,
-                                                  color: Colors.white,
+                                                  color: Colors.blue[900], // Changed to dark blue
                                                   fontWeight: FontWeight.w600,
                                                 ),
-                                                overflow: TextOverflow.ellipsis, // Potong teks jika terlalu panjang
-                                                maxLines: 1, // Batasi menjadi 1 baris
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
                                               ),
                                             ),
                                             SizedBox(height: 8 * scaleFactor),
-                                            // Harga Produk
                                             Text(
                                               'Price: \Rp${product.fields.price}',
                                               style: TextStyle(
                                                 fontSize: priceFontSize,
-                                                color: Colors.green,
+                                                color: Colors.green[900], // Changed to dark green
+                                                fontWeight: FontWeight.w600,
                                               ),
-                                              overflow: TextOverflow.ellipsis, // Potong teks jika terlalu panjang
-                                              maxLines: 1, // Batasi menjadi 1 baris
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
                                             ),
                                             SizedBox(height: 8 * scaleFactor),
                                             // Nama Restoran
@@ -305,56 +313,53 @@ class _ProductEntryPageState extends State<ProductEntryPage> {
                               Positioned(
                                 top: 8 * scaleFactor,
                                 right: 8 * scaleFactor,
-                                child: SizedBox(
-                                  height: 32 * scaleFactor,
-                                  width: 32 * scaleFactor,
+                                child: Container(
+                                  padding: EdgeInsets.all(4 * scaleFactor),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 4,
+                                        spreadRadius: 1,
+                                      ),
+                                    ],
+                                  ),
                                   child: StatefulBuilder(
                                     builder: (context, setState) {
                                       return IconButton(
-                                        // Tambahkan "return" di sini
                                         icon: Icon(
                                           product.fields.bookmarked.contains(user.id)
                                               ? Icons.favorite
                                               : Icons.favorite_border,
                                           color: product.fields.bookmarked.contains(user.id)
                                               ? Colors.red
-                                              : Colors.grey,
-                                          size: 20,
+                                              : Colors.grey[400],
+                                          size: 20 * scaleFactor,
                                         ),
-
+                                        constraints: BoxConstraints(
+                                          minWidth: 32 * scaleFactor,
+                                          minHeight: 32 * scaleFactor,
+                                        ),
+                                        padding: EdgeInsets.zero,
                                         onPressed: () async {
-                                          final userId =
-                                              user.id; // ID user saat ini
-
+                                          // Bookmark logic remains the same
+                                          final userId = user.id;
                                           try {
-                                            final endpoint =
-                                                'http://127.0.0.1:8000/bookmark/toggle-bookmark-flutter/${product.pk}/';
-
-                                            // Kirim request ke server
+                                            final endpoint = 'http://127.0.0.1:8000/bookmark/toggle-bookmark-flutter/${product.pk}/';
                                             final response = await request.post(
                                               endpoint,
-                                              jsonEncode(
-                                                  {"product_id": product.pk}),
+                                              jsonEncode({"product_id": product.pk}),
                                             );
-
                                             if (response['success'] == true) {
-                                              // Perbarui status berdasarkan respons server
                                               setState(() {
-                                                if (response['bookmarked'] ==
-                                                    true) {
-                                                  product.fields.bookmarked
-                                                      .add(userId);
+                                                if (response['bookmarked'] == true) {
+                                                  product.fields.bookmarked.add(userId);
                                                 } else {
-                                                  product.fields.bookmarked
-                                                      .remove(userId);
+                                                  product.fields.bookmarked.remove(userId);
                                                 }
-                                                setState(() {
-                                                  _productFuture = fetchProducts(request); // Refetch data
-                                                });
                                               });
-                                            } else {
-                                              throw Exception(
-                                                  "Failed to toggle bookmark: ${response['message']}");
                                             }
                                           } catch (e) {
                                             print("Error: $e");

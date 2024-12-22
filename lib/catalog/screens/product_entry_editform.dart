@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:makan_bang/catalog/models/product_entry.dart';
+import 'package:makan_bang/catalog/screens/list_productentry.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:makan_bang/screens/menu.dart';
@@ -333,7 +334,7 @@ class _ProductEntryEditPageState extends State<ProductEntryEditPage> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const MyHomePage(),
+                                builder: (context) => const ProductEntryPage(),
                               ),
                             );
                           } else {
