@@ -85,7 +85,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Meal Plan',
+          'MAKAN BANG',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 24,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:makan_bang/bookmark/screens/list_bookmark.dart';
 import 'package:makan_bang/meal_planning/screens/first_page_meal_plan.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -94,7 +95,7 @@ class ItemCard extends StatelessWidget {
               await handleAuthNavigation(
                 context: context,
                 feature: "meal plan",
-                destination: const ForumPage(), // GANTI
+                destination: const MealPlanScreen(),
               );
               break;
             
@@ -102,7 +103,7 @@ class ItemCard extends StatelessWidget {
               await handleAuthNavigation(
                 context: context,
                 feature: "bookmarks",
-                destination: const ForumPage(), // GANTI
+                destination: const BookmarksPage(),
               );
               break;
             

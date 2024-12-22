@@ -67,13 +67,15 @@ class _ReviewEntryPageState extends State<ReviewEntryPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Review List'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context); // Kembali ke layar sebelumnya
-          },
+        title: const Text(
+          'MAKAN BANG',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
         ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        centerTitle: true,
       ),
       drawer: const LeftDrawer(),
       body: FutureBuilder<List<RateReviewEntry>>(

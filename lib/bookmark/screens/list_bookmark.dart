@@ -48,179 +48,259 @@ class _BookmarksPageState extends State<BookmarksPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bookmarked Products'),
+        title: const Text(
+          'MAKAN BANG',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        centerTitle: true,
       ),
       drawer: const LeftDrawer(),
-      body: FutureBuilder(
-        future: _bookmarkedProductsFuture,
-        builder: (context, AsyncSnapshot<List<Product>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text(
-                'Anda belum memiliki produk yang di-bookmark.',
-                style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
-              ),
-            );
-          } else {
-            return GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: crossAxisCount,
-                crossAxisSpacing: 14 * scaleFactor,
-                mainAxisSpacing: 14 * scaleFactor,
-                childAspectRatio: 0.7,
-              ),
-              itemCount: snapshot.data!.length,
-              itemBuilder: (_, index) {
-                Product product = snapshot.data![index];
-                return LayoutBuilder(
-                  builder: (context, constraints) {
-                    double itemWidth = constraints.maxWidth;
-                    double imageHeight = itemWidth * 0.5;
-                    double fontSize = itemWidth * 0.06;
-
-                    return Card(
-                      elevation: 8,
-                      margin: EdgeInsets.all(10 * scaleFactor),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16 * scaleFactor),
-                      ),
-                      child: Stack(
-                        children: [
-                          InkWell(
-                            splashColor: Colors.blue.withAlpha(30),
-                            onTap: () {
-                              if (!request.loggedIn) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const LoginPage()),
-                                );
-                              } else {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        ProductDetailPage(product: product),
-                                  ),
-                                );
-                              }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.circular(16 * scaleFactor),
-                                color: Colors.white,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Gambar Produk
-                                  ClipRRect(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Title Section with scaleFactor
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              20 * scaleFactor,
+              24 * scaleFactor,
+              20 * scaleFactor,
+              16 * scaleFactor
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Here's what you've bookmarked",
+                  style: TextStyle(
+                    fontSize: 24 * scaleFactor,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                SizedBox(height: 8 * scaleFactor),
+                Text(
+                  "List of your favorite food and beverages!",
+                  style: TextStyle(
+                    fontSize: 16 * scaleFactor,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Grid Content
+          Expanded(
+            child: FutureBuilder(
+              future: _bookmarkedProductsFuture,
+              builder: (context, AsyncSnapshot<List<Product>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.bookmark_border, 
+                          size: 64 * scaleFactor, 
+                          color: Colors.grey[400]
+                        ),
+                        SizedBox(height: 16 * scaleFactor),
+                        Text(
+                          'No bookmarked items yet',
+                          style: TextStyle(
+                            fontSize: 20 * scaleFactor,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(height: 8 * scaleFactor),
+                        Text(
+                          'Start exploring and save your favorites!',
+                          style: TextStyle(
+                            fontSize: 16 * scaleFactor,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  return GridView.builder(
+                    padding: EdgeInsets.all(16 * scaleFactor),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      crossAxisSpacing: 14 * scaleFactor,
+                      mainAxisSpacing: 14 * scaleFactor,
+                      childAspectRatio: 0.7,
+                    ),
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (_, index) {
+                      Product product = snapshot.data![index];
+                      return Card(
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12 * scaleFactor),
+                        ),
+                        child: Stack(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Image Container with fixed height
+                                SizedBox(
+                                  height: 140 * scaleFactor, // Reduced height
+                                  width: double.infinity,
+                                  child: ClipRRect(
                                     borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(16 * scaleFactor),
+                                      top: Radius.circular(12 * scaleFactor)
                                     ),
-                                    child: product.fields.pictureLink.isNotEmpty
-                                        ? Image.network(
-                                            product.fields.pictureLink,
-                                            height: imageHeight,
-                                            width: double.infinity,
-                                            fit: BoxFit.cover,
-                                          )
-                                        : Image(
-                                            image: const AssetImage(
-                                                'assets/placeholder.jpg'),
-                                            height: imageHeight,
-                                            width: double.infinity,
-                                            fit: BoxFit.cover,
-                                          ),
+                                    child: Image.network(
+                                      product.fields.pictureLink,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.all(10 * scaleFactor),
+                                ),
+                                // Content Container
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(10 * scaleFactor),
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        // Nama Produk
+                                        // Category
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 8 * scaleFactor,
+                                            vertical: 4 * scaleFactor
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue[50],
+                                            borderRadius: BorderRadius.circular(6 * scaleFactor),
+                                          ),
+                                          child: Text(
+                                            product.fields.kategori,
+                                            style: TextStyle(
+                                              fontSize: 11 * scaleFactor, // Slightly reduced
+                                              color: Colors.blue[900],
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: 6 * scaleFactor),
+                                        // Product Name
                                         Text(
                                           product.fields.item,
                                           style: TextStyle(
-                                            fontSize: fontSize,
+                                            fontSize: 14 * scaleFactor, // Slightly reduced
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.black,
                                           ),
+                                          maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                         ),
-                                        SizedBox(height: 8 * scaleFactor),
-                                        // Harga Produk
+                                        SizedBox(height: 4 * scaleFactor),
+                                        // Price
                                         Text(
-                                          'Price: \Rp${product.fields.price}',
+                                          'Rp${product.fields.price}',
                                           style: TextStyle(
-                                            fontSize: fontSize * 1.2,
-                                            color: Colors.green,
+                                            fontSize: 16 * scaleFactor,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.green[900],
                                           ),
+                                        ),
+                                        SizedBox(height: 4 * scaleFactor),
+                                        // Restaurant
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.restaurant,
+                                              size: 14 * scaleFactor,
+                                              color: Colors.grey[600]
+                                            ),
+                                            SizedBox(width: 4 * scaleFactor),
+                                            Expanded(
+                                              child: Text(
+                                                product.fields.restaurant,
+                                                style: TextStyle(
+                                                  fontSize: 12 * scaleFactor,
+                                                  color: Colors.grey[600],
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          // Top-Right Button
-                          Positioned(
-                            top: 8 * scaleFactor,
-                            right: 8 * scaleFactor,
-                            child: SizedBox(
-                              height: 32 * scaleFactor,
-                              width: 32 * scaleFactor,
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.favorite,
-                                  color: Colors.red,
-                                  size: 20,
                                 ),
-                                onPressed: () async {
-                                  try {
-                                    final endpoint =
-                                        'http://127.0.0.1:8000/bookmark/toggle-bookmark-flutter/${product.pk}/';
-                                    final response = await request.post(
-                                      endpoint,
-                                      jsonEncode(
-                                          {"product_id": product.pk}),
-                                    );
+                              ],
+                            ),
+                            // Bookmark Button
+                            Positioned(
+                              top: 8 * scaleFactor,
+                              right: 8 * scaleFactor,
+                              child: Container(
+                                padding: EdgeInsets.all(4 * scaleFactor),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20 * scaleFactor),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 4 * scaleFactor,
+                                      spreadRadius: 1 * scaleFactor,
+                                    ),
+                                  ],
+                                ),
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.favorite,
+                                    color: Colors.red,
+                                    size: 18 * scaleFactor,
+                                  ),
+                                  constraints: BoxConstraints(
+                                    minWidth: 30 * scaleFactor,
+                                    minHeight: 30 * scaleFactor,
+                                  ),
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () async {
+                                    try {
+                                      final endpoint = 'http://127.0.0.1:8000/bookmark/toggle-bookmark-flutter/${product.pk}/';
+                                      final response = await request.post(
+                                        endpoint,
+                                        jsonEncode({"product_id": product.pk}),
+                                      );
 
-                                    if (response['success'] == true) {
-                                      setState(() {
-                                        _bookmarkedProductsFuture =
-                                            fetchBookmarkedProducts(
-                                                request);
-                                      });
-                                    } else {
-                                      throw Exception(
-                                          "Failed to toggle bookmark: ${response['message']}");
+                                      if (response['success'] == true) {
+                                        setState(() {
+                                          _bookmarkedProductsFuture = fetchBookmarkedProducts(request);
+                                        });
+                                      }
+                                    } catch (e) {
+                                      print("Error: $e");
                                     }
-                                  } catch (e) {
-                                    print("Error: $e");
-                                  }
-                                },
+                                  },
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                }
               },
-            );
-          }
-        },
+            ),
+          ),
+        ],
       ),
     );
   }

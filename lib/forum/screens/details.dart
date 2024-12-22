@@ -118,7 +118,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
     
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Forum',
+        title: const Text('MAKAN BANG',
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 24,)

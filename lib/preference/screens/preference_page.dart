@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:makan_bang/catalog/models/product_entry.dart';
+import 'package:makan_bang/widgets/left_drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:makan_bang/catalog/screens/productdetail.dart';
@@ -306,10 +307,17 @@ class _PreferencePageState extends State<PreferencePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Preferences'),
+        title: const Text(
+          'MAKAN BANG',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
         backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Colors.black,
+        centerTitle: true,
       ),
+      drawer: const LeftDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddPreferenceDialog,
         backgroundColor: Theme.of(context).colorScheme.primary,

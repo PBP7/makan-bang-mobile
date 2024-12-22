@@ -51,7 +51,7 @@ class _ForumFormPageState extends State<ForumFormPage> {
     
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.forum == null ? 'New Forum Discussion' : 'Edit Forum',
+        title: Text(widget.forum == null ? 'New Forum' : 'Edit Forum',
         style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 24,

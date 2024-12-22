@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:makan_bang/catalog/models/product_entry.dart';
+import 'package:makan_bang/widgets/left_drawer.dart';
 import 'package:url_launcher/url_launcher.dart'; // Import url_launcher
 import 'package:makan_bang/rate_review/models/ratereview_entry.dart';
 import 'package:makan_bang/rate_review/screens/addreview.dart';
@@ -25,8 +26,17 @@ class ProductDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(product.fields.item),
+        title: const Text(
+          'MAKAN BANG',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        centerTitle: true,
       ),
+      drawer: const LeftDrawer(),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(16.0),
@@ -56,14 +66,14 @@ class ProductDetailPage extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade100,
+                  color: Colors.blue.shade50,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   product.fields.kategori,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16.0,
-                    color: Colors.blue,
+                    color: Colors.blue.shade900,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -87,7 +97,7 @@ class ProductDetailPage extends StatelessWidget {
                   const SizedBox(width: 5),
                   Flexible( // Ganti Expanded menjadi Flexible
                     child: Text(
-                      product.fields.lokasi,
+                      product.fields.restaurant,
                       style: const TextStyle(fontSize: 16.0, color: Colors.grey),
                       overflow: TextOverflow.visible, // Biarkan teks meluas jika perlu
                       maxLines: null, // Izinkan teks turun ke bawah
@@ -133,18 +143,18 @@ class ProductDetailPage extends StatelessWidget {
               // Link GoFood
               Row(
                 children: [
-                  const Icon(Icons.link, size: 20, color: Colors.blue),
+                  Icon(Icons.link, size: 20, color: Colors.blue[900]),
                   const SizedBox(width: 5),
                   GestureDetector(
                     onTap: () {
                       // Tindakan ketika link GoFood diklik
                       _launchGoFoodLink(product.fields.linkGofood);
                     },
-                    child: const Text(
+                    child: Text(
                       'View in GoFood',
                       style: TextStyle(
                         fontSize: 16.0,
-                        color: Colors.blue,
+                        color: Colors.blue[900],
                         decoration: TextDecoration.underline,
                       ),
                     ),
@@ -155,9 +165,9 @@ class ProductDetailPage extends StatelessWidget {
               // Harga
               Text(
                 "Price: Rp${product.fields.price}",
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 24.0,
-                  color: Colors.green,
+                  color: Colors.green[900],
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -172,30 +182,71 @@ class ProductDetailPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              // Tombol untuk melihat review
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ReviewEntryPage(productId: product.pk),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade100),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Text(
+                      'See what people say...',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
                     ),
-                  );
-                },
-                child: const Text('Lihat Rating & Review'),
-              ),
-              const SizedBox(height: 10),
-              // Tombol untuk menambah review
-              ElevatedButton(
-                onPressed: () {
-                  // Tambahkan logika untuk form review
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) => AddReview(productId: product.pk), 
-                    // builder: (context) => RateReviewEntryPage(productId: product.pk),
-                  );
-                },
-                child: const Text('Tambah atau Perbarui Review'),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ReviewEntryPage(productId: product.pk),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.star_rate_rounded),
+                      label: const Text('View All Reviews'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue[900],
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        textStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        elevation: 2,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (context) => AddReview(productId: product.pk),
+                        );
+                      },
+                      icon: const Icon(Icons.rate_review_rounded),
+                      label: const Text('Write a Review'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFF2C5282),
+                        side: const BorderSide(color: Color(0xFF2C5282)), // Matching blue for border
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        textStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        backgroundColor: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

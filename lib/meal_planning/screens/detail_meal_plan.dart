@@ -149,7 +149,7 @@ Widget build(BuildContext context) {
         onPressed: () => Navigator.pop(context),
       ),
       title: const Text(
-        'Detail Your Meal Plan',
+        'MAKAN BANG',
         style: TextStyle(color: Colors.black),
       ),
     ),

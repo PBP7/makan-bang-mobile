@@ -51,13 +51,15 @@ class _ProductEntryEditPageState extends State<ProductEntryEditPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Center(
-          child: Text(
-            'Edit Produk',
+        title: const Text(
+          'Edit Product',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
           ),
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Colors.white,
+        centerTitle: true,
       ),
       drawer: const LeftDrawer(),
       body: Form(

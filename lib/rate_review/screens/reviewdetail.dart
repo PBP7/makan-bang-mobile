@@ -20,9 +20,17 @@ class ReviewDetailPage extends StatelessWidget {
     final user = context.watch<UserModel>(); 
     return Scaffold(
       appBar: AppBar(
-        
-        title: Text(rateReviewEntry.fields.user.toString()),
+        title: const Text(
+          'MAKAN BANG',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        centerTitle: true,
       ),
+      drawer: const LeftDrawer(),
       floatingActionButton: user.name == 'admin' // Cek apakah user adalah admin
           ? const ShopFloatingActionButton() // Tampilkan FAB hanya untuk admin
           : null,

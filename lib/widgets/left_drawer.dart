@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:makan_bang/preference/screens/preference_page.dart';
 import 'package:makan_bang/bookmark/screens/list_bookmark.dart';
 import 'package:makan_bang/meal_planning/screens/first_page_meal_plan.dart';
+import 'package:makan_bang/rate_review/screens/listreview_entry.dart';
 import 'package:makan_bang/screens/menu.dart';
 import 'package:makan_bang/screens/login.dart';
 import 'package:makan_bang/catalog/screens/product_entryform.dart';
@@ -9,7 +10,6 @@ import 'package:makan_bang/catalog/screens/list_productentry.dart';
 import 'package:makan_bang/forum/screens/view_forum.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:makan_bang/preference/screens/preference_page.dart';
 
 class LeftDrawer extends StatefulWidget {
   const LeftDrawer({super.key});
@@ -138,7 +138,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
                           if (context.mounted) {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => const ForumPage()), // GANTI
+                              MaterialPageRoute(builder: (context) => const ReviewEntryPage(productId: '',)), // GANTI
                             );
                           }
                         } else {

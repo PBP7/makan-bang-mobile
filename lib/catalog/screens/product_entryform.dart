@@ -30,13 +30,15 @@ class _ProductEntryFormPageState extends State<ProductEntryFormPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Center(
-          child: Text(
-            'Form Tambah Produk',
+        title: const Text(
+          'Add Product',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
           ),
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Colors.white,
+        centerTitle: true,
       ),
       drawer: const LeftDrawer(),
       body: Form(

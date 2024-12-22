@@ -73,7 +73,7 @@ class _ForumPageState extends State<ForumPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Forum',
+          'MAKAN BANG',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 24,
