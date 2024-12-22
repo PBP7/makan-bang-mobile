@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:makan_bang/catalog/models/product_entry.dart';
 import 'package:url_launcher/url_launcher.dart'; // Import url_launcher
+import 'package:makan_bang/rate_review/models/ratereview_entry.dart';
+import 'package:makan_bang/rate_review/screens/addreview.dart';
+import 'package:makan_bang/rate_review/screens/listreview_entry.dart';
+import 'package:makan_bang/rate_review/screens/ratereviewform_entry.dart';
+import 'package:makan_bang/rate_review/screens/reviewpage.dart';
+import 'package:makan_bang/rate_review/widgets/buttondelay.dart';
+
 class ProductDetailPage extends StatelessWidget {
   final Product product;
 
@@ -163,6 +170,32 @@ class ProductDetailPage extends StatelessWidget {
                   height: 1.5,
                   color: Colors.black87,
                 ),
+              ),
+              const SizedBox(height: 20),
+              // Tombol untuk melihat review
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ReviewEntryPage(productId: product.pk),
+                    ),
+                  );
+                },
+                child: const Text('Lihat Rating & Review'),
+              ),
+              const SizedBox(height: 10),
+              // Tombol untuk menambah review
+              ElevatedButton(
+                onPressed: () {
+                  // Tambahkan logika untuk form review
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => AddReview(productId: product.pk), 
+                    // builder: (context) => RateReviewEntryPage(productId: product.pk),
+                  );
+                },
+                child: const Text('Tambah atau Perbarui Review'),
               ),
             ],
           ),
