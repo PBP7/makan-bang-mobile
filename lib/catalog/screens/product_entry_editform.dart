@@ -66,7 +66,7 @@ class _ProductEntryEditPageState extends State<ProductEntryEditPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Product Name
+              // Item (max_length=50)
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
@@ -78,19 +78,23 @@ class _ProductEntryEditPageState extends State<ProductEntryEditPage> {
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                   ),
-                  onChanged: (String? value) {
+                  onChanged: (value) {
                     setState(() {
-                      _item = value!;
+                      _item = value;
                     });
                   },
-                  validator: (String? value) {
+                  validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Item tidak boleh kosong!";
+                    }
+                    if (value.length > 50) {
+                      return "Item tidak boleh lebih dari 50 karakter!";
                     }
                     return null;
                   },
                 ),
               ),
+
               // Picture Link
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -103,12 +107,12 @@ class _ProductEntryEditPageState extends State<ProductEntryEditPage> {
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                   ),
-                  onChanged: (String? value) {
+                  onChanged: (value) {
                     setState(() {
-                      _pictureLink = value!;
+                      _pictureLink = value;
                     });
                   },
-                  validator: (String? value) {
+                  validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Picture link tidak boleh kosong!";
                     }
@@ -116,7 +120,8 @@ class _ProductEntryEditPageState extends State<ProductEntryEditPage> {
                   },
                 ),
               ),
-              // Description
+
+              // Description (max_length=255)
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
@@ -128,19 +133,23 @@ class _ProductEntryEditPageState extends State<ProductEntryEditPage> {
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                   ),
-                  onChanged: (String? value) {
+                  onChanged: (value) {
                     setState(() {
-                      _description = value!;
+                      _description = value;
                     });
                   },
-                  validator: (String? value) {
+                  validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Deskripsi tidak boleh kosong!";
+                    }
+                    if (value.length > 255) {
+                      return "Deskripsi tidak boleh lebih dari 255 karakter!";
                     }
                     return null;
                   },
                 ),
               ),
+
               // Price
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -153,23 +162,27 @@ class _ProductEntryEditPageState extends State<ProductEntryEditPage> {
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                   ),
-                  onChanged: (String? value) {
+                  onChanged: (value) {
                     setState(() {
-                      _price = int.tryParse(value!) ?? 0;
+                      _price = int.tryParse(value) ?? 0;
                     });
                   },
-                  validator: (String? value) {
+                  validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Harga tidak boleh kosong!";
                     }
                     if (int.tryParse(value) == null) {
                       return "Harga harus berupa angka!";
                     }
+                    if (int.tryParse(value)! < 0) {
+                      return "Harga tidak boleh negatif!";
+                    }
                     return null;
                   },
                 ),
               ),
-              // Category
+
+              // Kategori (max_length=31)
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
@@ -181,20 +194,24 @@ class _ProductEntryEditPageState extends State<ProductEntryEditPage> {
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                   ),
-                  onChanged: (String? value) {
+                  onChanged: (value) {
                     setState(() {
-                      _kategori = value!;
+                      _kategori = value;
                     });
                   },
-                  validator: (String? value) {
+                  validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Kategori tidak boleh kosong!";
+                    }
+                    if (value.length > 31) {
+                      return "Kategori tidak boleh lebih dari 31 karakter!";
                     }
                     return null;
                   },
                 ),
               ),
-              // Restaurant
+
+              // Restaurant (max_length=90)
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
@@ -206,20 +223,24 @@ class _ProductEntryEditPageState extends State<ProductEntryEditPage> {
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                   ),
-                  onChanged: (String? value) {
+                  onChanged: (value) {
                     setState(() {
-                      _restaurant = value!;
+                      _restaurant = value;
                     });
                   },
-                  validator: (String? value) {
+                  validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Restaurant tidak boleh kosong!";
+                    }
+                    if (value.length > 90) {
+                      return "Restaurant tidak boleh lebih dari 90 karakter!";
                     }
                     return null;
                   },
                 ),
               ),
-              // Location
+
+              // Location (max_length=175)
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
@@ -231,45 +252,24 @@ class _ProductEntryEditPageState extends State<ProductEntryEditPage> {
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                   ),
-                  onChanged: (String? value) {
+                  onChanged: (value) {
                     setState(() {
-                      _lokasi = value!;
+                      _lokasi = value;
                     });
                   },
-                  validator: (String? value) {
+                  validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Lokasi tidak boleh kosong!";
                     }
-                    return null;
-                  },
-                ),
-              ),
-              // GoFood Link
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  initialValue: _linkGofood,
-                  decoration: InputDecoration(
-                    hintText: "GoFood Link",
-                    labelText: "GoFood Link",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _linkGofood = value!;
-                    });
-                  },
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return "GoFood Link tidak boleh kosong!";
+                    if (value.length > 175) {
+                      return "Lokasi tidak boleh lebih dari 175 karakter!";
                     }
                     return null;
                   },
                 ),
               ),
-              // Nutrition Info
+
+              // Nutrition (max_length=150)
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
@@ -281,41 +281,38 @@ class _ProductEntryEditPageState extends State<ProductEntryEditPage> {
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                   ),
-                  onChanged: (String? value) {
+                  onChanged: (value) {
                     setState(() {
-                      _nutrition = value!;
+                      _nutrition = value;
                     });
                   },
-                  validator: (String? value) {
+                  validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Nutrition tidak boleh kosong!";
+                    }
+                    if (value.length > 150) {
+                      return "Nutrition tidak boleh lebih dari 150 karakter!";
                     }
                     return null;
                   },
                 ),
               ),
+
               // Submit Button
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(
-                        Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        // Send updated data to Django and wait for a response
                         final response = await request.postJson(
                           "http://127.0.0.1:8000/katalog/edit-flutter/$_id",
                           jsonEncode(<String, dynamic>{
                             'item': _item,
                             'picture_link': _pictureLink,
                             'description': _description,
-                            'price':
-                                _price, // Send price as an integer directly
+                            'price': _price,
                             'kategori': _kategori,
                             'restaurant': _restaurant,
                             'lokasi': _lokasi,
@@ -323,6 +320,7 @@ class _ProductEntryEditPageState extends State<ProductEntryEditPage> {
                             'nutrition': _nutrition,
                           }),
                         );
+
                         if (context.mounted) {
                           if (response['status'] == 'success') {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -333,13 +331,13 @@ class _ProductEntryEditPageState extends State<ProductEntryEditPage> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => MyHomePage()),
+                                builder: (context) => const MyHomePage(),
+                              ),
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text(
-                                    "Terdapat kesalahan, silakan coba lagi."),
+                                content: Text("Terdapat kesalahan, silakan coba lagi."),
                               ),
                             );
                           }
